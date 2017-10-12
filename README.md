@@ -4,7 +4,7 @@ GW2 Raid Tool is used for automatically parsing newly created ArcDps files and d
 In order to do this the application uses a modified version of the EVTC log parser and RaidHeros.
 
 ## Shoutout
-RaidHeros: https://raidheroes.tk/
+RaidHeros: https://raidheroes.tk/  
 EVTC Log Parser: https://github.com/phoenix-oosd/EVTC-Log-Parser
 
 ## Installation
