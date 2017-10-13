@@ -1,0 +1,186 @@
+﻿<controls:MetroWindow x:Class="RaidTool.MainWindow"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                      xmlns:viewModels="clr-namespace:RaidTool.ViewModels"
+                      xmlns:helper="clr-namespace:RaidTool.Helper"
+                      xmlns:enums="clr-namespace:RaidTool.Enums"
+                      mc:Ignorable="d"
+                      NonActiveWindowTitleBrush="{DynamicResource AccentColorBrush}"
+                      Title="GW2 Raid Tool" Height="700" Width="800"
+                      d:DataContext="{d:DesignData Type=ViewModel:MainViewModel, IsDesignTimeCreatable=False}">
+    <controls:MetroWindow.WindowButtonCommands>
+        <controls:WindowButtonCommands Style="{DynamicResource MahApps.Metro.Styles.WindowButtonCommands.Win10}" />
+    </controls:MetroWindow.WindowButtonCommands>
+    <controls:MetroWindow.RightWindowCommands>
+        <controls:WindowCommands>
+            <ToggleButton x:Name="ShowSettingsButton">
+                <iconPacks:PackIconOcticons Kind="Settings" />
+            </ToggleButton>
+	        <ToggleButton x:Name="ShowAboutButton">
+		        <iconPacks:PackIconOcticons Kind="Question" />
+	        </ToggleButton>
+		</controls:WindowCommands>
+    </controls:MetroWindow.RightWindowCommands>
+    <controls:MetroWindow.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibiltyConverter" />
+    </controls:MetroWindow.Resources>
+    <controls:MetroWindow.Flyouts>
+        <controls:FlyoutsControl DataContext="{Binding ElementName=Root, Path=DataContext}">
+            <controls:Flyout Header="Settings" Position="Right" Width="250"
+                             IsOpen="{Binding ElementName=ShowSettingsButton, Path=IsChecked}"
+                             d:DataContext="{d:DesignInstance viewModels:MainViewModel, IsDesignTimeCreatable=False}">
+                <StackPanel Margin="5">
+                    <Label Content="ArcDps" FontFamily="{DynamicResource HeaderFontFamily}"
+                           FontSize="{DynamicResource SubHeaderFontSize}" />
+                    <Label Content="Logfile type" />
+                    <ComboBox Margin="5" IsEnabled="False"
+                              DisplayMemberPath="Value"
+                              SelectedValuePath="Key"
+                              SelectedValue="{Binding LogType}" 
+                              ItemsSource="{Binding Source={x:Static enums:LogTypes.LogTypesDictionary}}">
+                    </ComboBox>
+                    <Label Content="Raid Hero" FontFamily="{DynamicResource HeaderFontFamily}"
+                           FontSize="{DynamicResource SubHeaderFontSize}" />
+                    <Button HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                            Height="32"
+                            BorderThickness="0" Foreground="{Binding ElementName=description, Path=Foreground}"
+                            Margin="5"
+                            Command="{Binding OpenFilePathCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Open html file location" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <Label Content="Raid tool" FontFamily="{DynamicResource HeaderFontFamily}"
+                           FontSize="{DynamicResource SubHeaderFontSize}" />
+                    <Label Content="Visible parsed logs" />
+                    <ComboBox Margin="5" 
+                              DisplayMemberPath="Value"
+                              SelectedValuePath="Key"
+                              SelectedValue="{Binding LogFilter}" 
+                              ItemsSource="{Binding Source={x:Static enums:LogFilter.LogFilterDictionary}}">
+                    </ComboBox>
+                </StackPanel>
+            </controls:Flyout>
+	        <controls:Flyout Header="About" Position="Right"
+	                         IsOpen="{Binding ElementName=ShowAboutButton, Path=IsChecked}"
+	                         d:DataContext="{d:DesignInstance viewModels:MainViewModel, IsDesignTimeCreatable=False}">
+		        <StackPanel Margin="5">
+			        <Label Content="GW2 Raid Tool" FontFamily="{DynamicResource HeaderFontFamily}"
+			               FontSize="{DynamicResource SubHeaderFontSize}" />
+			        <Label Content="DF Tools" FontFamily="{DynamicResource HeaderFontFamily}"
+			               FontSize="{DynamicResource FlyoutHeaderFontSize}" />
+			        <Label Content="Version 1.0.1" FontFamily="{DynamicResource HeaderFontFamily}"
+			               FontSize="{DynamicResource ContentFontSize}" />
+			        <TextBlock Margin="5" FontFamily="{DynamicResource ContentFontFamily}" FontSize="{DynamicResource ContentFontSize}">
+					Special thanks to <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://raidheroes.tk/">RaidHeros</Hyperlink> and <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/phoenix-oosd/EVTC-Log-Parser">EVTC-Log-Parser</Hyperlink>	
+					</TextBlock>
+
+			        <Label Content="Changelog" Margin="0 10 0 0" FontFamily="{DynamicResource HeaderFontFamily}"
+			               FontSize="{DynamicResource FlyoutHeaderFontSize}" />
+					<TextBlock Margin="5" FontFamily="{DynamicResource ContentFontFamily}" FontSize="{DynamicResource ContentFontSize}">
+						1.0.2
+						<LineBreak />
+						- Fixed crash when no ArcDps log directory is present<LineBreak />
+						- The filter selected for the encounter list is now saved and restored when opening the application again<LineBreak />
+						- UI is now red ... cause GW2 ... I am not sure I like it :/<LineBreak />
+						<LineBreak />
+						1.0.1
+						<LineBreak />
+						- New parser added based on the EVTC-Log-Parser<LineBreak />
+						- Added new RaidHeros v1.2-12 support<LineBreak />
+						- New files will be parsed by the included parser, afterwards the RaidHeros html file will be created<LineBreak />
+						- Small differences in DPS between internal parser and RaidHeros due to rounding observed<LineBreak />
+						- DPS and damage are now sortable by number values (was string before)<LineBreak />
+						<LineBreak />
+						1.0.0
+						<LineBreak />
+						- Auto-detection of new evtc and evtc.zip files in the directory <LineBreak />
+						- Parsing of boss and individual DPS<LineBreak />
+						- Open RaidHeros html file by double click<LineBreak />
+					</TextBlock>
+					
+		        </StackPanel>
+	        </controls:Flyout>
+		</controls:FlyoutsControl>
+    </controls:MetroWindow.Flyouts>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition>
+                <RowDefinition.Style>
+                    <Style TargetType="RowDefinition">
+                        <Setter Property="Height" Value="Auto" />
+                    </Style>
+                </RowDefinition.Style>
+            </RowDefinition>
+            <RowDefinition>
+                <RowDefinition.Style>
+                    <Style TargetType="RowDefinition">
+                        <Setter Property="Height" Value="Auto" />
+                    </Style>
+                </RowDefinition.Style>
+            </RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <StackPanel Orientation="Horizontal">
+                <Button Margin="5" Command="{Binding AddCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconOcticons Kind="Plus" Width="16" Height="16" Margin="3"
+                                                    VerticalAlignment="Center" />
+                        <TextBlock Text="Add" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Margin="5" Command="{Binding ClearCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconOcticons Kind="X" Width="16" Height="16" Margin="3"
+                                                    VerticalAlignment="Center" />
+                        <TextBlock Text="Clear" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Margin="5" Command="{Binding ClearAllCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconOcticons Kind="X" Width="16" Height="16" Margin="3"
+                                                    VerticalAlignment="Center" />
+                        <TextBlock Text="Clear all" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+        <DataGrid Grid.Row="1" ItemsSource="{Binding DisplayedRaidHerosLogFiles}" AutoGenerateColumns="False" Margin="5"
+                  SelectionMode="Single" IsReadOnly="True" SelectedItem="{Binding SelectedLog}"
+                  ClipboardCopyMode="None" MinHeight="100">
+            <DataGrid.InputBindings>
+                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding OpenCommand}" />
+            </DataGrid.InputBindings>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Result" Binding="{Binding EncounterResult}" />
+                <DataGridTextColumn Header="Time" Binding="{Binding EncounterTime}" />
+				<DataGridTextColumn Header="Boss DPS" Binding="{Binding BossDps}" />
+				<DataGridTextColumn Header="All DPS" Binding="{Binding AllDps}" />
+				<DataGridTextColumn Header="Date"
+                                    Binding="{helper:CultureAwareBinding Path=EncounterDate, StringFormat=g}" />
+            </DataGrid.Columns>
+        </DataGrid>
+		<DataGrid Grid.Row="2" ItemsSource="{Binding SelectedLog.CharacterStatistics}" IsReadOnly="True" ClipboardCopyMode="None"
+                  Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibiltyConverter}}"
+                  Margin="5" VerticalScrollBarVisibility="Auto" MinHeight="100" MaxHeight="300"/>
+        <Expander Grid.Row="3" VerticalAlignment="Bottom" Header="{Binding Path=LastLogMessage}" IsExpanded="False"
+                  ExpandDirection="Up">
+            <ListBox ItemsSource="{Binding ParseMessages}" MaxHeight="200" Margin="5">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="IsEnabled" Value="False" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+        </Expander>
+    </Grid>
+</controls:MetroWindow>
