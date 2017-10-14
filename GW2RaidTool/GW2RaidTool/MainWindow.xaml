@@ -81,25 +81,13 @@
 			        <Label Content="Changelog" Margin="0 10 0 0" FontFamily="{DynamicResource HeaderFontFamily}"
 			               FontSize="{DynamicResource FlyoutHeaderFontSize}" />
 					<TextBlock Margin="5" FontFamily="{DynamicResource ContentFontFamily}" FontSize="{DynamicResource ContentFontSize}">
-						1.0.2
+						1.0.3
 						<LineBreak />
-						- Fixed crash when no ArcDps log directory is present<LineBreak />
-						- The filter selected for the encounter list is now saved and restored when opening the application again<LineBreak />
-						- UI is now red ... cause GW2 ... I am not sure I like it :/<LineBreak />
+						- Added an auto update funciton for RaidHeros<LineBreak />
+						- Different strategies for log detection are now available in the options<LineBreak />
+						- Selected log detection strategy will be persisted<LineBreak />
 						<LineBreak />
-						1.0.1
-						<LineBreak />
-						- New parser added based on the EVTC-Log-Parser<LineBreak />
-						- Added new RaidHeros v1.2-12 support<LineBreak />
-						- New files will be parsed by the included parser, afterwards the RaidHeros html file will be created<LineBreak />
-						- Small differences in DPS between internal parser and RaidHeros due to rounding observed<LineBreak />
-						- DPS and damage are now sortable by number values (was string before)<LineBreak />
-						<LineBreak />
-						1.0.0
-						<LineBreak />
-						- Auto-detection of new evtc and evtc.zip files in the directory <LineBreak />
-						- Parsing of boss and individual DPS<LineBreak />
-						- Open RaidHeros html file by double click<LineBreak />
+						Older changes can be seen here: <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/M4xZ3r0/GW2RaidTool/releases">GitHub releases</Hyperlink>
 					</TextBlock>
 					
 		        </StackPanel>
