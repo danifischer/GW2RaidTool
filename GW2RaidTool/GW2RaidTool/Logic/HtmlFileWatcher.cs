@@ -47,7 +47,7 @@ namespace RaidTool.Logic
 		private void ParsedLogOnCreated(object sender, FileSystemEventArgs e)
 		{
 			var fileName = Path.GetFileName(_encounterLog.EvtcPath);
-			if (fileName != null && fileName.Contains(e.Name.Split('.')[0]) == false)
+			if (fileName != null && fileName.Contains(e.Name.Split(' ')[0]) == false)
 			{
 				return;	
 			}

@@ -37,11 +37,9 @@
                     <Label Content="ArcDps" FontFamily="{DynamicResource HeaderFontFamily}"
                            FontSize="{DynamicResource SubHeaderFontSize}" />
                     <Label Content="Logfile type" />
-                    <ComboBox Margin="5" IsEnabled="False"
-                              DisplayMemberPath="Value"
-                              SelectedValuePath="Key"
+                    <ComboBox Margin="5" IsEnabled="True"
                               SelectedValue="{Binding LogType}" 
-                              ItemsSource="{Binding Source={x:Static enums:LogTypes.LogTypesDictionary}}">
+                              ItemsSource="{Binding LogTypes}">
                     </ComboBox>
                     <Label Content="Raid Hero" FontFamily="{DynamicResource HeaderFontFamily}"
                            FontSize="{DynamicResource SubHeaderFontSize}" />

@@ -58,5 +58,17 @@ namespace RaidTool.Properties {
                 this["RaidHerosVerison"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("auto detect (read ArcDps ini)")]
+        public string LogType {
+            get {
+                return ((string)(this["LogType"]));
+            }
+            set {
+                this["LogType"] = value;
+            }
+        }
     }
 }

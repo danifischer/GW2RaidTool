@@ -3,6 +3,7 @@ using Autofac;
 using EVTC_Log_Parser;
 using RaidTool.Logic;
 using RaidTool.Logic.Interfaces;
+using RaidTool.Logic.LogDetectionStrategies;
 using RaidTool.ViewModels;
 using ReactiveUI;
 
@@ -22,6 +23,10 @@ namespace RaidTool
 			containerBuilder.RegisterType<HtmlFileWatcher>().As<IHtmlFileWatcher>();
 			containerBuilder.RegisterType<LocalLogParser>().As<ILocalLogParser>();
 			containerBuilder.RegisterType<RaidHerosUpdater>().As<IRaidHerosUpdater>();
+			containerBuilder.RegisterType<CompressedStrategy>().As<ILogDetectionStrategy>();
+			containerBuilder.RegisterType<IniReaderStrategy>().As<ILogDetectionStrategy>();
+			containerBuilder.RegisterType<UncompressedStrategy>().As<ILogDetectionStrategy>();
+			containerBuilder.RegisterType<WaitStrategy>().As<ILogDetectionStrategy>();
 			containerBuilder.RegisterType<MainWindow>();
 			containerBuilder.RegisterType<MainViewModel>();
 

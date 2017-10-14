@@ -11,5 +11,8 @@
     <Setting Name="RaidHerosVerison" Type="System.String" Scope="User">
       <Value Profile="(Default)">raid_heroes-1.2-12-gf54eac4</Value>
     </Setting>
+    <Setting Name="LogType" Type="System.String" Scope="User">
+      <Value Profile="(Default)">auto detect (read ArcDps ini)</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

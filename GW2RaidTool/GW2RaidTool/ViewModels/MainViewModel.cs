@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -25,25 +26,29 @@ namespace RaidTool.ViewModels
 	{
 		private readonly IFileWatcher _fileWatcher;
 		private readonly IMessageBus _messageBus;
-		private readonly Task _raidHerosUpdateTask;
+		private readonly IEnumerable<ILogDetectionStrategy> _logDetectionStrategies;
 		private bool _isVisible;
 		private string _lastLogMessage;
 		private LogFilterEnum _logFilter;
-		private LogTypesEnum _logType;
+		private string _logType;
 		private ObservableCollection<string> _parseMessages;
 		private bool _raidHerosIsUpdating;
 		private IEncounterLog _selectedLog;
 
-		public MainViewModel(IFileWatcher fileWatcher, IMessageBus messageBus, IRaidHerosUpdater raidHerosUpdater)
+		public MainViewModel(IFileWatcher fileWatcher, IMessageBus messageBus, 
+			IRaidHerosUpdater raidHerosUpdater, IEnumerable<ILogDetectionStrategy> logDetectionStrategies)
 		{
 			_fileWatcher = fileWatcher;
 			_messageBus = messageBus;
+			_logDetectionStrategies = logDetectionStrategies;
+
+			_logDetectionStrategies.OrderBy(i => i.Name).ToList().ForEach(s => LogTypes.Add(s.Name));
 
 			messageBus.Listen<NewEncounterMessage>().Subscribe(HandleNewEncounter);
 			messageBus.Listen<UpdatedEncounterMessage>().Subscribe(HandleUpdatedEncounter);
 			messageBus.Listen<LogMessage>().Subscribe(HandleNewLogMessage);
 
-			_raidHerosUpdateTask = Task.Run(() =>
+			var raidHerosUpdateTask = Task.Run(() =>
 			{
 				RaidHerosIsUpdating = true;
 				raidHerosUpdater.UpdateRaidHeros();
@@ -51,8 +56,6 @@ namespace RaidTool.ViewModels
 
 			var directoryName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-			RaidHerosLogFiles = new ObservableCollection<IEncounterLog>();
-			DisplayedRaidHerosLogFiles = new ObservableCollection<IEncounterLog>();
 			ParseMessages = new ObservableCollection<string>();
 			OpenCommand = new RelayCommand(OpenLog, _ => SelectedLog != null);
 			ClearCommand = new RelayCommand(ClearSelectedItem, _ => SelectedLog != null);
@@ -68,14 +71,13 @@ namespace RaidTool.ViewModels
 			_messageBus.SendMessage(new LogMessage("Waiting for new log."));
 
 			LogFilter = (LogFilterEnum) int.Parse(Settings.Default.LogFilter);
-			LogType = LogTypesEnum.AutoDetect;
+			LogType = Settings.Default.LogType ?? LogTypes.First();
 
-			_fileWatcher.SetLogDetectionStrategy(new IniReaderStrategy());
 			_fileWatcher.Run();
 
 			Task.Run(() =>
 			{
-				while (!_raidHerosUpdateTask.IsCompleted)
+				while (!raidHerosUpdateTask.IsCompleted)
 				{
 				}
 				
@@ -84,16 +86,30 @@ namespace RaidTool.ViewModels
 			});
 		}
 
+		public ObservableCollection<string> LogTypes { get; } = new ObservableCollection<string>();
+
 		public bool RaidHerosIsUpdating
 		{
 			get => _raidHerosIsUpdating;
 			set => _raidHerosIsUpdating = this.RaiseAndSetIfChanged(ref _raidHerosIsUpdating, value);
 		}
 
-		public LogTypesEnum LogType
+		public string LogType
 		{
 			get => _logType;
-			set => _logType = this.RaiseAndSetIfChanged(ref _logType, value);
+			set
+			{
+				_logType = this.RaiseAndSetIfChanged(ref _logType, value);
+				ChangeLogType();
+			}
+		}
+
+		private void ChangeLogType()
+		{
+			var logDetectionStrategy = _logDetectionStrategies.First(s => s.Name.Contains(LogType));
+			_fileWatcher.SetLogDetectionStrategy(logDetectionStrategy);
+			Settings.Default.LogType = LogType;
+			Settings.Default.Save();
 		}
 
 		public LogFilterEnum LogFilter
@@ -114,7 +130,7 @@ namespace RaidTool.ViewModels
 
 		public ICommand ClearCommand { get; set; }
 
-		public ObservableCollection<IEncounterLog> RaidHerosLogFiles { get; set; }
+		public ObservableCollection<IEncounterLog> RaidHerosLogFiles { get; } = new ObservableCollection<IEncounterLog>();
 
 		public IEncounterLog SelectedLog
 		{
@@ -147,7 +163,7 @@ namespace RaidTool.ViewModels
 			set => _parseMessages = this.RaiseAndSetIfChanged(ref _parseMessages, value);
 		}
 
-		public ObservableCollection<IEncounterLog> DisplayedRaidHerosLogFiles { get; set; }
+		public ObservableCollection<IEncounterLog> DisplayedRaidHerosLogFiles { get; } = new ObservableCollection<IEncounterLog>();
 
 		private void HandleUpdatedEncounter(UpdatedEncounterMessage encounterMessage)
 		{
