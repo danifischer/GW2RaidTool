@@ -8,10 +8,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using IniParser;
 using Microsoft.Win32;
 using RaidTool.Enums;
 using RaidTool.Helper;
 using RaidTool.Logic.Interfaces;
+using RaidTool.Logic.LogDetectionStrategies;
 using RaidTool.Messages;
 using RaidTool.Models;
 using RaidTool.Properties;
@@ -68,6 +70,7 @@ namespace RaidTool.ViewModels
 			LogFilter = (LogFilterEnum) int.Parse(Settings.Default.LogFilter);
 			LogType = LogTypesEnum.AutoDetect;
 
+			_fileWatcher.SetLogDetectionStrategy(new IniReaderStrategy());
 			_fileWatcher.Run();
 
 			Task.Run(() =>
