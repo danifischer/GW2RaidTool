@@ -32,7 +32,7 @@ namespace RaidTool.Logic
 				};
 
 				if (sharedValuesPlayerValue.Dead 
-				    && Math.Abs(sharedValuesPlayerValue.FightDurationPlayer - sharedValues.FightDuration) > 1.0)
+				    && sharedValuesPlayerValue.FightDurationPlayer + 1.0 < sharedValues.FightDuration)
 				{
 					var percent = (sharedValuesPlayerValue.FightDurationPlayer / sharedValues.FightDuration * 100).ToString("0");
 					var timeOfDead = TimeSpan.FromSeconds(sharedValuesPlayerValue.FightDurationPlayer);
