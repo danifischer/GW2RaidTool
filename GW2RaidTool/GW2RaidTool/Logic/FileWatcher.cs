@@ -30,6 +30,8 @@ namespace RaidTool.Logic
 			_messageBus = messageBus;
 		}
 
+		public ILogDetectionStrategy LogDetectionStrategy { get; internal set; }
+
 		public FileSystemWatcher LogfileWatcher { get; private set; }
 
 		public void Run()
@@ -37,15 +39,16 @@ namespace RaidTool.Logic
 			var logDict = Path.Combine(Environment.GetFolderPath(
 				Environment.SpecialFolder.MyDocuments), @"Guild Wars 2\addons\arcdps\arcdps.cbtlogs\");
 			if (!Directory.Exists(logDict))
+			{
 				Directory.CreateDirectory(logDict);
+			}
 
 			LogfileWatcher = new FileSystemWatcher(logDict)
 			{
 				IncludeSubdirectories = true,
-				Filter = "*.evtc*"
+				Filter = LogDetectionStrategy != null ? LogDetectionStrategy.Filter : "*.evtc*"
 			};
 			LogfileWatcher.Created += LogFileOnCreated;
-			LogfileWatcher.EnableRaisingEvents = true;
 		}
 
 		public void ParseLogFile(FileInfo fileInfo)
@@ -79,6 +82,15 @@ namespace RaidTool.Logic
 			LogfileWatcher.EnableRaisingEvents = true;
 		}
 
+		public void SetLogDetectionStrategy(ILogDetectionStrategy logDetectionStrategy)
+		{
+			LogDetectionStrategy = logDetectionStrategy;
+			if (LogfileWatcher != null)
+			{
+				LogfileWatcher.Filter = LogDetectionStrategy.Filter;
+			}
+		}
+
 		private void LogFileOnCreated(object sender, FileSystemEventArgs e)
 		{
 			try
@@ -91,7 +103,7 @@ namespace RaidTool.Logic
 				}
 
 				_messageBus.SendMessage(new LogMessage($"New log detected {e.Name}"));
-				Thread.Sleep(int.Parse(Settings.Default.WaitTime));
+				Thread.Sleep(LogDetectionStrategy?.WaitTime ?? int.Parse(Settings.Default.WaitTime));
 
 				var fullPath = e.FullPath;
 
