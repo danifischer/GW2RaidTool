@@ -78,6 +78,9 @@
     <Reference Include="Autofac, Version=4.6.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.4.6.1\lib\net45\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.6.0.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.6.0\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=1.4.3.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.4.3\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
@@ -92,6 +95,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll</HintPath>
     </Reference>
@@ -139,9 +143,11 @@
     <Compile Include="Logic\Interfaces\ILogFileConverter.cs" />
     <Compile Include="Logic\Interfaces\ILogfileParser.cs" />
     <Compile Include="Logic\Interfaces\IParsedFileCopier.cs" />
+    <Compile Include="Logic\Interfaces\IRaidHerosUpdater.cs" />
     <Compile Include="Logic\LogFileConverter.cs" />
     <Compile Include="Logic\LogfileParser.cs" />
     <Compile Include="Logic\ParsedFileCopier.cs" />
+    <Compile Include="Logic\RaidHerosUpdater.cs" />
     <Compile Include="Messages\LogMessage.cs" />
     <Compile Include="Messages\NewEncounterMessage.cs" />
     <Compile Include="Messages\UpdatedEncounterMessage.cs" />

@@ -23,14 +23,16 @@ namespace RaidTool.ViewModels
 	{
 		private readonly IFileWatcher _fileWatcher;
 		private readonly IMessageBus _messageBus;
+		private readonly Task _raidHerosUpdateTask;
 		private bool _isVisible;
 		private string _lastLogMessage;
 		private LogFilterEnum _logFilter;
 		private LogTypesEnum _logType;
 		private ObservableCollection<string> _parseMessages;
+		private bool _raidHerosIsUpdating;
 		private IEncounterLog _selectedLog;
 
-		public MainViewModel(IFileWatcher fileWatcher, IMessageBus messageBus)
+		public MainViewModel(IFileWatcher fileWatcher, IMessageBus messageBus, IRaidHerosUpdater raidHerosUpdater)
 		{
 			_fileWatcher = fileWatcher;
 			_messageBus = messageBus;
@@ -38,6 +40,12 @@ namespace RaidTool.ViewModels
 			messageBus.Listen<NewEncounterMessage>().Subscribe(HandleNewEncounter);
 			messageBus.Listen<UpdatedEncounterMessage>().Subscribe(HandleUpdatedEncounter);
 			messageBus.Listen<LogMessage>().Subscribe(HandleNewLogMessage);
+
+			_raidHerosUpdateTask = Task.Run(() =>
+			{
+				RaidHerosIsUpdating = true;
+				raidHerosUpdater.UpdateRaidHeros();
+			});
 
 			var directoryName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
@@ -51,7 +59,8 @@ namespace RaidTool.ViewModels
 				RaidHerosLogFiles.Clear();
 				DisplayedRaidHerosLogFiles.Clear();
 			}, _ => RaidHerosLogFiles.Any());
-			AddCommand = new RelayCommand(AddLog, _ => _fileWatcher.LogfileWatcher.EnableRaisingEvents);
+			AddCommand = new RelayCommand(AddLog,
+				_ => _fileWatcher.LogfileWatcher.EnableRaisingEvents && !RaidHerosIsUpdating);
 			OpenFilePathCommand = new RelayCommand(_ => { OpenLogFilePath(directoryName); });
 
 			_messageBus.SendMessage(new LogMessage("Waiting for new log."));
@@ -60,6 +69,22 @@ namespace RaidTool.ViewModels
 			LogType = LogTypesEnum.AutoDetect;
 
 			_fileWatcher.Run();
+
+			Task.Run(() =>
+			{
+				while (!_raidHerosUpdateTask.IsCompleted)
+				{
+				}
+				
+				RaidHerosIsUpdating = false;
+				_fileWatcher.LogfileWatcher.EnableRaisingEvents = true;
+			});
+		}
+
+		public bool RaidHerosIsUpdating
+		{
+			get => _raidHerosIsUpdating;
+			set => _raidHerosIsUpdating = this.RaiseAndSetIfChanged(ref _raidHerosIsUpdating, value);
 		}
 
 		public LogTypesEnum LogType
@@ -74,7 +99,7 @@ namespace RaidTool.ViewModels
 			set
 			{
 				_logFilter = this.RaiseAndSetIfChanged(ref _logFilter, value);
-				Settings.Default.LogFilter = ((int)_logFilter).ToString();
+				Settings.Default.LogFilter = ((int) _logFilter).ToString();
 				Settings.Default.Save();
 				OnLogFilterChanged();
 			}
@@ -131,11 +156,17 @@ namespace RaidTool.ViewModels
 		{
 			var combine = Path.Combine(directoryName, $"{DateTime.Now.Date:yyyyMMdd}");
 			if (Directory.Exists(combine))
+			{
 				Process.Start(combine);
+			}
 			else if (Directory.Exists(directoryName))
+			{
 				Process.Start(directoryName);
+			}
 			else
+			{
 				_messageBus.SendMessage(new LogMessage("Log file directory not found, open action canceled."));
+			}
 		}
 
 		private void AddLog(object obj)
@@ -163,9 +194,13 @@ namespace RaidTool.ViewModels
 		private void ClearSelectedItem(object obj)
 		{
 			if (RaidHerosLogFiles.Contains(SelectedLog))
+			{
 				RaidHerosLogFiles.Remove(SelectedLog);
+			}
 			if (DisplayedRaidHerosLogFiles.Contains(SelectedLog))
+			{
 				DisplayedRaidHerosLogFiles.Remove(SelectedLog);
+			}
 		}
 
 		private void HandleNewLogMessage(LogMessage logMessage)
@@ -184,9 +219,13 @@ namespace RaidTool.ViewModels
 		private void OpenLog(object obj)
 		{
 			if (File.Exists(SelectedLog.ParsedLogPath))
+			{
 				Process.Start(SelectedLog.ParsedLogPath);
+			}
 			else
+			{
 				_messageBus.SendMessage(new LogMessage("html file not present, open action canceled."));
+			}
 		}
 
 		private void HandleNewEncounter(NewEncounterMessage encounterMessage)
@@ -199,7 +238,9 @@ namespace RaidTool.ViewModels
 					RaidHerosLogFiles.Add(encounterLog);
 					FilterLogs(encounterLog);
 					if (DisplayedRaidHerosLogFiles.Contains(encounterLog))
+					{
 						SelectedLog = encounterLog;
+					}
 				}));
 		}
 
@@ -209,12 +250,16 @@ namespace RaidTool.ViewModels
 			{
 				case LogFilterEnum.Latest:
 					foreach (var oldLog in DisplayedRaidHerosLogFiles.Where(i => i.Name == encounterLog.Name))
+					{
 						DisplayedRaidHerosLogFiles.Remove(oldLog);
+					}
 					DisplayedRaidHerosLogFiles.Add(encounterLog);
 					break;
 				case LogFilterEnum.Succeeded:
 					if (encounterLog.EncounterResult != "Fail")
+					{
 						DisplayedRaidHerosLogFiles.Add(encounterLog);
+					}
 					break;
 				case LogFilterEnum.All:
 				default:
@@ -232,21 +277,29 @@ namespace RaidTool.ViewModels
 			{
 				case LogFilterEnum.Latest:
 					foreach (var raidHerosLogs in RaidHerosLogFiles.OrderBy(i => i.EncounterDate).GroupBy(i => i.Name))
+					{
 						DisplayedRaidHerosLogFiles.Add(raidHerosLogs.Last());
+					}
 					break;
 				case LogFilterEnum.Succeeded:
 					foreach (var raidHerosLog in RaidHerosLogFiles.Where(i => i.EncounterResult != "Fail"))
+					{
 						DisplayedRaidHerosLogFiles.Add(raidHerosLog);
+					}
 					break;
 				case LogFilterEnum.All:
 				default:
 					foreach (var raidHerosLogFile in RaidHerosLogFiles)
+					{
 						DisplayedRaidHerosLogFiles.Add(raidHerosLogFile);
+					}
 					break;
 			}
 
 			if (DisplayedRaidHerosLogFiles.Contains(selectedLog))
+			{
 				SelectedLog = selectedLog;
+			}
 		}
 	}
 }

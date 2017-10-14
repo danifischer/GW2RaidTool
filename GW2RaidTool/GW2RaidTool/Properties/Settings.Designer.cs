@@ -46,5 +46,17 @@ namespace RaidTool.Properties {
                 this["LogFilter"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("raid_heroes-1.2-12-gf54eac4")]
+        public string RaidHerosVerison {
+            get {
+                return ((string)(this["RaidHerosVerison"]));
+            }
+            set {
+                this["RaidHerosVerison"] = value;
+            }
+        }
     }
 }

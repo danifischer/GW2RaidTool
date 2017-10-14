@@ -21,6 +21,7 @@ namespace RaidTool
 			containerBuilder.RegisterType<FileWatcher>().As<IFileWatcher>();
 			containerBuilder.RegisterType<HtmlFileWatcher>().As<IHtmlFileWatcher>();
 			containerBuilder.RegisterType<LocalLogParser>().As<ILocalLogParser>();
+			containerBuilder.RegisterType<RaidHerosUpdater>().As<IRaidHerosUpdater>();
 			containerBuilder.RegisterType<MainWindow>();
 			containerBuilder.RegisterType<MainViewModel>();
 

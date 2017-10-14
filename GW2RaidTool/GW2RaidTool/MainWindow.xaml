@@ -129,7 +129,7 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
-            <StackPanel Orientation="Horizontal">
+            <DockPanel>
                 <Button Margin="5" Command="{Binding AddCommand}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconOcticons Kind="Plus" Width="16" Height="16" Margin="3"
@@ -151,7 +151,11 @@
                         <TextBlock Text="Clear all" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-            </StackPanel>
+				<DockPanel Margin="5" HorizontalAlignment="Right" Visibility="{Binding RaidHerosIsUpdating, Converter={StaticResource BooleanToVisibiltyConverter}}" >
+					<controls:ProgressRing IsLarge="False" Width="5" Height="5" IsActive="{Binding RaidHerosIsUpdating}" />
+					<Label Content="Updating RaidHeros" VerticalAlignment="Center"/>
+				</DockPanel>
+            </DockPanel>
         </Grid>
         <DataGrid Grid.Row="1" ItemsSource="{Binding DisplayedRaidHerosLogFiles}" AutoGenerateColumns="False" Margin="5"
                   SelectionMode="Single" IsReadOnly="True" SelectedItem="{Binding SelectedLog}"

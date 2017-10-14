@@ -45,7 +45,6 @@ namespace RaidTool.Logic
 				Filter = "*.evtc*"
 			};
 			LogfileWatcher.Created += LogFileOnCreated;
-			LogfileWatcher.EnableRaisingEvents = true;
 		}
 
 		public void ParseLogFile(FileInfo fileInfo)

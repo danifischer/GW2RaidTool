@@ -8,5 +8,8 @@
     <Setting Name="LogFilter" Type="System.String" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="RaidHerosVerison" Type="System.String" Scope="User">
+      <Value Profile="(Default)">raid_heroes-1.2-12-gf54eac4</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
