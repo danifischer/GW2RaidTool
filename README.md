@@ -1,4 +1,11 @@
 # GW2RaidTool
+![build status](https://daniel-fischer.visualstudio.com/_apis/public/build/definitions/745bf3ce-6aa9-400c-a2f7-0e34d260a006/3/badge)
+
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/M4xZ3r0/GW2RaidTool/master/LICENSE)
+
+[![GitHub issues](https://img.shields.io/github/issues/M4xZ3r0/GW2RaidTool.svg)](https://github.com/M4xZ3r0/GW2RaidTool/issues)
+[![GitHub issues](https://img.shields.io/github/issues-closed/M4xZ3r0/GW2RaidTool.svg)](https://github.com/M4xZ3r0/GW2RaidTool/issues-closed)
+
 ## Description
 GW2 Raid Tool is used for automatically parsing newly created ArcDps files and display the results for the user.
 In order to do this the application uses a modified version of the EVTC log parser and RaidHeros.
