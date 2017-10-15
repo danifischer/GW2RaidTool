@@ -237,9 +237,13 @@ namespace RaidTool.ViewModels
 
 		private void OpenLog(object obj)
 		{
-			if (File.Exists(SelectedLog.ParsedLogPath))
+			var encounterLog = obj as IEncounterLog;
+			if (encounterLog != null)
 			{
-				Process.Start(SelectedLog.ParsedLogPath);
+				if (File.Exists(encounterLog.ParsedLogPath))
+				{
+					Process.Start(encounterLog.ParsedLogPath);
+				}
 			}
 			else
 			{

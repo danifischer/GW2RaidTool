@@ -26,8 +26,9 @@
 		</controls:WindowCommands>
     </controls:MetroWindow.RightWindowCommands>
     <controls:MetroWindow.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibiltyConverter" />
-    </controls:MetroWindow.Resources>
+		<BooleanToVisibilityConverter x:Key="BooleanToVisibiltyConverter" />
+		<helper:NullToVisibliltyConverter x:Key="NullToVisibliltyConverter" />
+	</controls:MetroWindow.Resources>
     <controls:MetroWindow.Flyouts>
         <controls:FlyoutsControl DataContext="{Binding ElementName=Root, Path=DataContext}">
             <controls:Flyout Header="Settings" Position="Right" Width="250"
@@ -145,9 +146,10 @@
         </Grid>
         <DataGrid Grid.Row="1" ItemsSource="{Binding DisplayedRaidHerosLogFiles}" AutoGenerateColumns="False" Margin="5"
                   SelectionMode="Single" IsReadOnly="True" SelectedItem="{Binding SelectedLog}"
-                  ClipboardCopyMode="None" MinHeight="100">
+                  ClipboardCopyMode="None" MinHeight="100" x:Name="EncounterGrid">
             <DataGrid.InputBindings>
-                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding OpenCommand}" />
+				<MouseBinding MouseAction="LeftDoubleClick" Command="{Binding OpenCommand}" 
+							  CommandParameter="{Binding ElementName=EncounterGrid, Path=SelectedItem}" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
@@ -157,6 +159,18 @@
 				<DataGridTextColumn Header="All DPS" Binding="{Binding AllDps}" />
 				<DataGridTextColumn Header="Date"
                                     Binding="{helper:CultureAwareBinding Path=EncounterDate, StringFormat=g}" />
+	            <DataGridTemplateColumn Header="html">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Background="Transparent" 
+									Command="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=DataContext.OpenCommand}" 
+									CommandParameter="{Binding}"
+							        Visibility="{Binding Path=ParsedLogPath, Converter={StaticResource NullToVisibliltyConverter}}">
+								<iconPacks:PackIconOcticons Kind="Globe" Height="12" />
+							</Button>		
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 		<DataGrid Grid.Row="2" ItemsSource="{Binding SelectedLog.CharacterStatistics}" IsReadOnly="True" ClipboardCopyMode="None"
