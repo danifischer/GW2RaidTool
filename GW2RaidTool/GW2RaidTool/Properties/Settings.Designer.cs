@@ -70,5 +70,17 @@ namespace RaidTool.Properties {
                 this["LogType"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("false")]
+        public string OpenNewRaidHerosFiles {
+            get {
+                return ((string)(this["OpenNewRaidHerosFiles"]));
+            }
+            set {
+                this["OpenNewRaidHerosFiles"] = value;
+            }
+        }
     }
 }

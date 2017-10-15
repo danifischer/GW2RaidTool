@@ -34,6 +34,7 @@ namespace RaidTool.ViewModels
 		private ObservableCollection<string> _parseMessages;
 		private bool _raidHerosIsUpdating;
 		private IEncounterLog _selectedLog;
+		private bool Settin;
 
 		public MainViewModel(IFileWatcher fileWatcher, IMessageBus messageBus, 
 			IRaidHerosUpdater raidHerosUpdater, IEnumerable<ILogDetectionStrategy> logDetectionStrategies)
@@ -169,6 +170,11 @@ namespace RaidTool.ViewModels
 		{
 			_messageBus.SendMessage(
 				new LogMessage($"Html available for {encounterMessage.EncounterLog.Name}. Waiting for new log."));
+
+			if (bool.Parse(Settings.Default.OpenNewRaidHerosFiles) && File.Exists(encounterMessage.EncounterLog.ParsedLogPath))
+			{
+				Process.Start(encounterMessage.EncounterLog.ParsedLogPath);
+			}
 		}
 
 		private void OpenLogFilePath(string directoryName)
@@ -248,6 +254,16 @@ namespace RaidTool.ViewModels
 			else
 			{
 				_messageBus.SendMessage(new LogMessage("html file not present, open action canceled."));
+			}
+		}
+
+		public bool OpenNewRaidHerosFiles
+		{
+			get => bool.Parse(Settings.Default.OpenNewRaidHerosFiles);
+			set
+			{
+				Settings.Default.OpenNewRaidHerosFiles = value.ToString();
+				Settings.Default.Save();
 			}
 		}
 

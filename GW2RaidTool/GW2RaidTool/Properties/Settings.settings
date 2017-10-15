@@ -14,5 +14,8 @@
     <Setting Name="LogType" Type="System.String" Scope="User">
       <Value Profile="(Default)">auto detect (read ArcDps ini)</Value>
     </Setting>
+    <Setting Name="OpenNewRaidHerosFiles" Type="System.String" Scope="User">
+      <Value Profile="(Default)">false</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
