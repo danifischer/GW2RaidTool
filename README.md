@@ -4,7 +4,7 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/M4xZ3r0/GW2RaidTool/master/LICENSE)
 
 [![GitHub issues](https://img.shields.io/github/issues/M4xZ3r0/GW2RaidTool.svg)](https://github.com/M4xZ3r0/GW2RaidTool/issues)
-[![GitHub issues](https://img.shields.io/github/issues-closed/M4xZ3r0/GW2RaidTool.svg)](https://github.com/M4xZ3r0/GW2RaidTool/issues)
+[![GitHub issues](https://img.shields.io/github/issues-closed/M4xZ3r0/GW2RaidTool.svg)](https://github.com/M4xZ3r0/GW2RaidTool/issues?utf8=%E2%9C%93&q=is%3Aissue%20is%3Aclosed)
 
 ## Description
 GW2 Raid Tool is used for automatically parsing newly created ArcDps files and display the results for the user.
