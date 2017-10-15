@@ -21,6 +21,7 @@ namespace EVTC_Log_Parser.Model
             _target = parser.NPCs.Find(n => n.SpeciesId == parser.Metadata.TargetSpeciesId);
             _time = _target.LastAware - _target.FirstAware;
             _players = parser.Players;
+	        _npcs = parser.NPCs;
 
 			foreach (Player p in _players)
             {
@@ -52,8 +53,8 @@ namespace EVTC_Log_Parser.Model
                 CondiBoss = p.DamageEvents.Where(e => e.IsBuff && e.Target == _target.Instid).Sum(e => e.Damage),
 				Down = p.StateEvents.Count(e => e.StateChange == StateChange.ChangeDown),
 				Dead = p.StateEvents.Any(e => e.StateChange == StateChange.ChangeDead),
-				DeadTime = p.StateEvents.SingleOrDefault(e => e.StateChange == StateChange.ChangeDead)?.Time,
-				FightDurationPlayer = p.StateEvents.SingleOrDefault(e => e.StateChange == StateChange.ChangeDead) != null ? (p.StateEvents.Single(e => e.StateChange == StateChange.ChangeDead).Time - _target.FirstAware)/1000.0 : -1.0,
+				DeadTime = p.StateEvents.LastOrDefault(e => e.StateChange == StateChange.ChangeDead)?.Time,
+				FightDurationPlayer = p.StateEvents.LastOrDefault(e => e.StateChange == StateChange.ChangeDead) != null ? (p.StateEvents.Last(e => e.StateChange == StateChange.ChangeDead).Time - _target.FirstAware)/1000.0 : -1.0,
 
 			}));
             rows = rows.OrderByDescending(f => f.TotalBoss).ToList();

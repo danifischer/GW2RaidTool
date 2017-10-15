@@ -3,7 +3,7 @@
     public class CombatEvent
     {
 	    public int Time { get; set; }
-        public int Damage { get; set; }
+        public long Damage { get; set; }
         public int SkillId { get; set; }
         public bool IsBuff { get; set; }
         public Result Result { get; set; }

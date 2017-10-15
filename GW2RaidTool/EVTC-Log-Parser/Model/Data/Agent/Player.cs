@@ -43,7 +43,8 @@ namespace EVTC_Log_Parser.Model
             {
                 if (e.SrcInstid == Instid || e.SrcMasterInstid == Instid)
                 {
-                    if (e.IFF == IFF.Foe && e.DstInstid != 0)
+                    if (e.IFF == IFF.Foe && e.DstInstid != 0 
+						&& npcs.Where(i => i.Instid == e.DstInstid).Any(j => j.Name != null))
                     {
                         if (e.StateChange == StateChange.None)
                         {
