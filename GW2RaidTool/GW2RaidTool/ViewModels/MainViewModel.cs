@@ -288,7 +288,7 @@ namespace RaidTool.ViewModels
 			switch (LogFilter)
 			{
 				case LogFilterEnum.Latest:
-					foreach (var oldLog in DisplayedRaidHerosLogFiles.Where(i => i.Name == encounterLog.Name))
+					foreach (var oldLog in DisplayedRaidHerosLogFiles.Where(i => i.Name == encounterLog.Name).ToList())
 					{
 						DisplayedRaidHerosLogFiles.Remove(oldLog);
 					}

@@ -138,6 +138,7 @@
     </ApplicationDefinition>
     <Compile Include="BootStrapper.cs" />
     <Compile Include="Helper\CultureAwareBinding.cs" />
+    <Compile Include="Helper\FileInUseChecker.cs" />
     <Compile Include="Helper\NullToVisibliltyConverter.cs" />
     <Compile Include="Helper\RelayCommand.cs" />
     <Compile Include="Logic\FileWatcher.cs" />

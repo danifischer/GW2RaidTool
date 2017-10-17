@@ -98,32 +98,30 @@ namespace EVTC_Log_Parser.Model
             // Until EOF
             while (_reader.BaseStream.Position != _reader.BaseStream.Length)
             {
-                Event combat = new Event()
-                {
-                    Time = (int)_reader.ReadUInt64(), // 8 bytes: Time
-                    SrcAgent = _reader.ReadUInt64Hex(), // 8 bytes: Src Agent
-                    DstAgent = _reader.ReadUInt64Hex(),  // 8 bytes: Dst Agent
-                    Value = _reader.ReadInt32(), // 4 bytes: Value
-                    BuffDmg = _reader.ReadInt32(), // 4 bytes: Buff Damage
-                    OverstackValue = _reader.ReadUInt16(), // 2 bytes: Overstack Value
-                    SkillId = _reader.ReadUInt16(), // 2 bytes: Skill Id
-                    SrcInstid = _reader.ReadUInt16(), // 2 bytes: Src Instid
-                    DstInstid = _reader.ReadUInt16(), // 2 bytes: Dst Instid
-                    SrcMasterInstid = _reader.ReadUInt16(), // 2 bytes: Src Master Instid
-                    IFF = (IFF)_reader.Skip(9).Read(), // 1 byte: IFF
-                    IsBuff = _reader.ReadBoolean(), // 1 byte: IsBuff
-                    Result = (Result)_reader.Read(), // 1 byte: Result
-                    Activation = (Activation)_reader.Read(), // 1 byte: Activation
-                    BuffRemove = (BuffRemove)_reader.Read(), // 1 byte: BuffRemove
-                    IsNinety = _reader.ReadBoolean(), // 1 byte: IsNinety
-                    IsFifty = _reader.ReadBoolean(), // 1 byte: IsFifty
-                    IsMoving = _reader.ReadBoolean(), // 1 byte: IsMoving
-                    StateChange = (StateChange)_reader.Read(), // 1 byte: StateChange
-                    IsFlanking = _reader.ReadBoolean(), // 1 byte: IsFlanking
-                    IsShield = _reader.ReadBoolean() // 1 byte: IsShield
-                };
+                Event combat = new Event();
+	            combat.Time = (int)_reader.ReadUInt64();
+	            combat.SrcAgent = _reader.ReadUInt64Hex();
+	            combat.DstAgent = _reader.ReadUInt64Hex();
+	            combat.Value = _reader.ReadInt32();
+	            combat.BuffDmg = _reader.ReadInt32();
+	            combat.OverstackValue = _reader.ReadUInt16();
+	            combat.SkillId = _reader.ReadUInt16();
+	            combat.SrcInstid = _reader.ReadUInt16();
+	            combat.DstInstid = _reader.ReadUInt16();
+	            combat.SrcMasterInstid = _reader.ReadUInt16();
+	            combat.IFF = (IFF)_reader.Skip(9).Read();
+	            combat.IsBuff = _reader.ReadBoolean();
+	            combat.Result = (Result)_reader.Read();
+	            combat.Activation = (Activation)_reader.Read();
+	            combat.BuffRemove = (BuffRemove)_reader.Read();
+	            combat.IsNinety = _reader.ReadBoolean();
+	            combat.IsFifty = _reader.ReadBoolean();
+	            combat.IsMoving = _reader.ReadBoolean();
+	            combat.StateChange = (StateChange)_reader.Read();
+	            combat.IsFlanking = _reader.ReadBoolean();
+	            combat.IsShield = _reader.ReadBoolean();
 
-                // Add Combat
+	            // Add Combat
                 _reader.Skip(2);
                 Events.Add(combat);
             }

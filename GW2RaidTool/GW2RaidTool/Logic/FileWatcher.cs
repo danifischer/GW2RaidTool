@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using EVTC_Log_Parser;
+using RaidTool.Helper;
 using RaidTool.Logic.Interfaces;
 using RaidTool.Messages;
 using RaidTool.Models;
@@ -103,24 +104,30 @@ namespace RaidTool.Logic
 				}
 
 				_messageBus.SendMessage(new LogMessage($"New log detected {e.Name}"));
-				Thread.Sleep(LogDetectionStrategy?.WaitTime ?? int.Parse(Settings.Default.WaitTime));
 
-				var fullPath = e.FullPath;
-
-				var fileInfo = new FileInfo(fullPath);
-
-				if (!fileInfo.Exists)
+				if (LogDetectionStrategy.CheckFile(e.FullPath))
 				{
-					fullPath = fullPath + ".zip";
-					fileInfo = new FileInfo(fullPath);
+					var fullPath = e.FullPath;
+
+					var fileInfo = new FileInfo(fullPath);
+
 					if (!fileInfo.Exists)
 					{
-						_messageBus.SendMessage(new LogMessage($"Log vanished ?!"));
-						return;
+						fullPath = fullPath + ".zip";
+						fileInfo = new FileInfo(fullPath);
+						if (!fileInfo.Exists)
+						{
+							_messageBus.SendMessage(new LogMessage($"Log vanished ?!"));
+							return;
+						}
 					}
-				}
 
-				ParseLogFile(fileInfo);
+					ParseLogFile(fileInfo);
+				}
+				else
+				{
+					_messageBus.SendMessage(new LogMessage($"File in use, please try manual import."));
+				}
 			}
 			catch (Exception exception)
 			{

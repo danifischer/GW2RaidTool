@@ -1,11 +1,20 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using RaidTool.Logic.Interfaces;
+using RaidTool.Messages;
+using ReactiveUI;
 
 namespace RaidTool.Logic
 {
 	public class LogfileParser : ILogfileParser
 	{
+		private readonly IMessageBus _messageBus;
+
+		public LogfileParser(IMessageBus messageBus)
+		{
+			_messageBus = messageBus;
+		}
+
         public void ParseLogfile(string name, string path, string raidHerosPath)
         {
             if (path != null)
@@ -24,7 +33,14 @@ namespace RaidTool.Logic
 
                 using (var process = Process.Start(processStartInfo))
                 {
-	                process?.WaitForExit();
+	                if (process != null && process.WaitForExit(30000))
+	                {
+		                _messageBus.SendMessage(new LogMessage($"html created for {name}"));
+	                }
+	                else
+	                {
+						_messageBus.SendMessage(new LogMessage($"Timeout while crating html for {name}"));
+					}
                 }
             }
         }

@@ -25,11 +25,13 @@
 	        </ToggleButton>
 		</controls:WindowCommands>
     </controls:MetroWindow.RightWindowCommands>
-    <controls:MetroWindow.Resources>
-		<BooleanToVisibilityConverter x:Key="BooleanToVisibiltyConverter" />
-		<helper:NullToVisibliltyConverter x:Key="NullToVisibliltyConverter" />
+	<controls:MetroWindow.Resources>
+		<ResourceDictionary>
+			<BooleanToVisibilityConverter x:Key="BooleanToVisibiltyConverter" />
+			<helper:NullToVisibliltyConverter x:Key="NullToVisibliltyConverter" />
+		</ResourceDictionary>
 	</controls:MetroWindow.Resources>
-    <controls:MetroWindow.Flyouts>
+	<controls:MetroWindow.Flyouts>
         <controls:FlyoutsControl DataContext="{Binding ElementName=Root, Path=DataContext}">
             <controls:Flyout Header="Settings" Position="Right" Width="250"
                              IsOpen="{Binding ElementName=ShowSettingsButton, Path=IsChecked}"
@@ -122,32 +124,32 @@
 
         <Grid Grid.Row="0">
             <DockPanel>
-                <Button Margin="5" Command="{Binding AddCommand}">
+				<Button Margin="5" Command="{Binding AddCommand}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconOcticons Kind="Plus" Width="16" Height="16" Margin="3"
                                                     VerticalAlignment="Center" />
                         <TextBlock Text="Add" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-                <Button Margin="5" Command="{Binding ClearCommand}">
+				<Button Margin="5" Command="{Binding ClearCommand}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconOcticons Kind="X" Width="16" Height="16" Margin="3"
                                                     VerticalAlignment="Center" />
                         <TextBlock Text="Clear" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-                <Button Margin="5" Command="{Binding ClearAllCommand}">
+				<Button Margin="5" Command="{Binding ClearAllCommand}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconOcticons Kind="X" Width="16" Height="16" Margin="3"
                                                     VerticalAlignment="Center" />
                         <TextBlock Text="Clear all" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-	            <Button Margin="5" Command="{Binding PrepareUpload}">
+	            <Button Margin="5" Command="{Binding UploadCommand}">
 		            <StackPanel Orientation="Horizontal">
 			            <iconPacks:PackIconOcticons Kind="CloudUpload" Width="16" Height="16" Margin="3"
 			                                        VerticalAlignment="Center" />
-			            <TextBlock Text="Prepare upload" VerticalAlignment="Center" />
+			            <TextBlock Text="Upload" VerticalAlignment="Center" />
 		            </StackPanel>
 	            </Button>
 				<DockPanel Margin="5" HorizontalAlignment="Right" Visibility="{Binding RaidHerosIsUpdating, Converter={StaticResource BooleanToVisibiltyConverter}}" >
