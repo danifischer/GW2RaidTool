@@ -12,6 +12,7 @@ namespace RaidTool.Models
 		private string _encounterResult;
 		private TimeSpan _encounterTime;
 		private string _name;
+		private string _parsedLogPath;
 
 		public EncounterLog(string name, string parsedLogPath, string evtcPath)
 		{
@@ -48,7 +49,12 @@ namespace RaidTool.Models
 			set => _encounterTime = this.RaiseAndSetIfChanged(ref _encounterTime, value);
 		}
 
-		public string ParsedLogPath { get; set; }
+		public string ParsedLogPath
+		{
+			get => _parsedLogPath;
+			set => _parsedLogPath = this.RaiseAndSetIfChanged(ref _parsedLogPath, value);
+		}
+
 		public string EvtcPath { get; set; }
 
 		public double BossDps

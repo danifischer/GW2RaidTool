@@ -13,16 +13,14 @@ namespace RaidTool.Logic
 	{
 		private readonly ILogfileParser _logfileParser;
 		private readonly IMessageBus _messageBus;
-		private readonly IParsedFileCopier _parsedFileCopier;
 		private readonly string _directoryName;
 		private IEncounterLog _encounterLog;
 		private FileSystemWatcher _fileSystemWatcher;
 
-		public HtmlFileWatcher(IMessageBus messageBus, ILogfileParser logfileParser, IParsedFileCopier parsedFileCopier)
+		public HtmlFileWatcher(IMessageBus messageBus, ILogfileParser logfileParser)
 		{
 			_messageBus = messageBus;
 			_logfileParser = logfileParser;
-			_parsedFileCopier = parsedFileCopier;
 			_directoryName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			StartWatcher();
 		}
@@ -30,18 +28,30 @@ namespace RaidTool.Logic
 		public void CreateRaidHerosFile(IEncounterLog encounterLog)
 		{
 			_encounterLog = encounterLog;
-		    _logfileParser.ParseLogfile(encounterLog.Name, encounterLog.EvtcPath, _directoryName);
+		    _logfileParser.ParseLogfile(encounterLog.Name, encounterLog.EvtcPath, GetOutputDir(_directoryName), _directoryName);
 		}
 
 		private void StartWatcher()
 		{
 			_fileSystemWatcher = new FileSystemWatcher(_directoryName)
 			{
-				IncludeSubdirectories = false,
+				IncludeSubdirectories = true,
 				Filter = "*.html"
 			};
-			_fileSystemWatcher.Created += ParsedLogOnCreated;
+			_fileSystemWatcher.Changed += ParsedLogOnCreated;
 			_fileSystemWatcher.EnableRaisingEvents = true;
+		}
+
+		public string GetOutputDir(string path)
+		{
+			var combine = Path.Combine(path, $"{DateTime.Now.Date:yyyyMMdd}");
+			
+			if (!Directory.Exists(combine))
+			{
+				Directory.CreateDirectory(combine);
+			}
+
+			return combine;
 		}
 
 		private void ParsedLogOnCreated(object sender, FileSystemEventArgs e)
@@ -55,8 +65,7 @@ namespace RaidTool.Logic
 			try
 			{
 				_fileSystemWatcher.EnableRaisingEvents = false;
-				_messageBus.SendMessage(new LogMessage("Moving Html file"));
-				_encounterLog.ParsedLogPath = _parsedFileCopier.CopyFile(_directoryName, e.FullPath);
+				_encounterLog.ParsedLogPath = e.FullPath;
 				_messageBus.SendMessage(new UpdatedEncounterMessage(_encounterLog));
 			}
 			catch (Exception exception)

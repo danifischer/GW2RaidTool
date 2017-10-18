@@ -34,6 +34,9 @@ namespace RaidTool.ViewModels
 		private ObservableCollection<string> _parseMessages;
 		private bool _raidHerosIsUpdating;
 		private IEncounterLog _selectedLog;
+		private bool Settin;
+		private CharacterStatistics _selectedCharacterStatistics;
+		private bool _isSkillFlyoutVisisble;
 
 		public MainViewModel(IFileWatcher fileWatcher, IMessageBus messageBus, 
 			IRaidHerosUpdater raidHerosUpdater, IEnumerable<ILogDetectionStrategy> logDetectionStrategies)
@@ -58,6 +61,8 @@ namespace RaidTool.ViewModels
 
 			ParseMessages = new ObservableCollection<string>();
 			OpenCommand = new RelayCommand(OpenLog, _ => SelectedLog != null);
+			UploadCommand = new RelayCommand(UploadLogFiles, _ => RaidHerosLogFiles.Any());
+			OpenSkillsCommand = new RelayCommand(ShowSkills);
 			ClearCommand = new RelayCommand(ClearSelectedItem, _ => SelectedLog != null);
 			ClearAllCommand = new RelayCommand(_ =>
 			{
@@ -85,6 +90,43 @@ namespace RaidTool.ViewModels
 				_fileWatcher.LogfileWatcher.EnableRaisingEvents = true;
 			});
 		}
+
+		private void UploadLogFiles(object obj)
+		{
+			try
+			{
+				var enumerable = DisplayedRaidHerosLogFiles.Select(i => i.EvtcPath).Distinct().ToList();
+				var directoryName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "temp");
+
+				if (Directory.Exists(directoryName))
+				{
+					Directory.Delete(directoryName, true);
+				}
+				Directory.CreateDirectory(directoryName);
+
+				Parallel.ForEach(enumerable, s =>
+				{
+					var fileInfo = new FileInfo(s);
+					var fileInfoName = fileInfo.Name;
+					File.Copy(s, Path.Combine(directoryName, fileInfoName));
+				});
+
+				Process.Start(directoryName);
+			}
+			catch (Exception e)
+			{
+				_messageBus.SendMessage(new LogMessage(e.Message));
+			}
+		}
+
+		public ICommand UploadCommand { get; set; }
+
+		private void ShowSkills(object obj)
+		{
+			IsSkillFlyoutVisisble = true;
+		}
+
+		public ICommand OpenSkillsCommand { get; set; }
 
 		public ObservableCollection<string> LogTypes { get; } = new ObservableCollection<string>();
 
@@ -138,9 +180,25 @@ namespace RaidTool.ViewModels
 			set
 			{
 				_selectedLog = this.RaiseAndSetIfChanged(ref _selectedLog, value);
+				RefillCharacterStatistics();
 				IsVisible = _selectedLog != null;
 			}
 		}
+
+		public CharacterStatistics SelectedCharacterStatistics
+		{
+			get => _selectedCharacterStatistics;
+			set
+			{
+				_selectedCharacterStatistics = this.RaiseAndSetIfChanged(ref _selectedCharacterStatistics, value);
+				if (SelectedCharacterStatistics == null)
+				{
+					IsSkillFlyoutVisisble = false;
+				}
+			}
+		}
+
+		public ObservableCollection<CharacterStatistics> CharacterStatistics { get; set; } = new ObservableCollection<CharacterStatistics>();
 
 		public ICommand OpenCommand { get; set; }
 		public ICommand AddCommand { get; set; }
@@ -149,6 +207,12 @@ namespace RaidTool.ViewModels
 		{
 			get => _isVisible;
 			set => _isVisible = this.RaiseAndSetIfChanged(ref _isVisible, value);
+		}
+
+		public bool IsSkillFlyoutVisisble
+		{
+			get => _isSkillFlyoutVisisble;
+			set => _isSkillFlyoutVisisble = this.RaiseAndSetIfChanged(ref _isSkillFlyoutVisisble, value);
 		}
 
 		public string LastLogMessage
@@ -169,6 +233,11 @@ namespace RaidTool.ViewModels
 		{
 			_messageBus.SendMessage(
 				new LogMessage($"Html available for {encounterMessage.EncounterLog.Name}. Waiting for new log."));
+
+			if (bool.Parse(Settings.Default.OpenNewRaidHerosFiles) && File.Exists(encounterMessage.EncounterLog.ParsedLogPath))
+			{
+				Process.Start(encounterMessage.EncounterLog.ParsedLogPath);
+			}
 		}
 
 		private void OpenLogFilePath(string directoryName)
@@ -237,13 +306,27 @@ namespace RaidTool.ViewModels
 
 		private void OpenLog(object obj)
 		{
-			if (File.Exists(SelectedLog.ParsedLogPath))
+			var encounterLog = obj as IEncounterLog;
+			if (encounterLog != null)
 			{
-				Process.Start(SelectedLog.ParsedLogPath);
+				if (File.Exists(encounterLog.ParsedLogPath))
+				{
+					Process.Start(encounterLog.ParsedLogPath);
+				}
 			}
 			else
 			{
 				_messageBus.SendMessage(new LogMessage("html file not present, open action canceled."));
+			}
+		}
+
+		public bool OpenNewRaidHerosFiles
+		{
+			get => bool.Parse(Settings.Default.OpenNewRaidHerosFiles);
+			set
+			{
+				Settings.Default.OpenNewRaidHerosFiles = value.ToString();
+				Settings.Default.Save();
 			}
 		}
 
@@ -263,12 +346,22 @@ namespace RaidTool.ViewModels
 				}));
 		}
 
+		private void RefillCharacterStatistics()
+		{
+			CharacterStatistics.Clear();
+			if(SelectedLog == null) return;
+			foreach (var selectedLogCharacterStatistic in SelectedLog.CharacterStatistics)
+			{
+				CharacterStatistics.Add(selectedLogCharacterStatistic);
+			}
+		}
+
 		private void FilterLogs(IEncounterLog encounterLog)
 		{
 			switch (LogFilter)
 			{
 				case LogFilterEnum.Latest:
-					foreach (var oldLog in DisplayedRaidHerosLogFiles.Where(i => i.Name == encounterLog.Name))
+					foreach (var oldLog in DisplayedRaidHerosLogFiles.Where(i => i.Name == encounterLog.Name).ToList())
 					{
 						DisplayedRaidHerosLogFiles.Remove(oldLog);
 					}

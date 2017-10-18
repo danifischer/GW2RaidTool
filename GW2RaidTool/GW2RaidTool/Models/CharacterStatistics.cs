@@ -1,4 +1,7 @@
-﻿namespace RaidTool.Models
+﻿using System.Collections;
+using System.Collections.Generic;
+
+namespace RaidTool.Models
 {
 	public class CharacterStatistics
 	{
@@ -12,6 +15,7 @@
 
 		public double BossDamage { get; set; }
 
+
 		public double AllDps { get; set; }
 
 		public double AllDamage { get; set; }
@@ -20,6 +24,6 @@
 
 		public string Dead { get; set; }
 		
-		
+		public IList<SkillDamage> Skills { get; set; } = new List<SkillDamage>();
 	}
 }

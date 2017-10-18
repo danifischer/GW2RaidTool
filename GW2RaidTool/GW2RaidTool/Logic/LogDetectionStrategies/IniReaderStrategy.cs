@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using IniParser;
 using Microsoft.Win32;
+using RaidTool.Helper;
 using RaidTool.Logic.Interfaces;
 using RaidTool.Messages;
 using RaidTool.Properties;
@@ -25,6 +27,11 @@ namespace RaidTool.Logic.LogDetectionStrategies
 		public string Filter { get; set; }
 
 		public int WaitTime { get; set; }
+
+		public bool CheckFile(string path)
+		{
+			return FileInUseChecker.CheckFile(path, WaitTime);
+		}
 
 		private string DetermineFilter()
 		{

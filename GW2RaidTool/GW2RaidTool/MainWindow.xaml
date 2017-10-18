@@ -25,10 +25,13 @@
 	        </ToggleButton>
 		</controls:WindowCommands>
     </controls:MetroWindow.RightWindowCommands>
-    <controls:MetroWindow.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibiltyConverter" />
-    </controls:MetroWindow.Resources>
-    <controls:MetroWindow.Flyouts>
+	<controls:MetroWindow.Resources>
+		<ResourceDictionary>
+			<BooleanToVisibilityConverter x:Key="BooleanToVisibiltyConverter" />
+			<helper:NullToVisibliltyConverter x:Key="NullToVisibliltyConverter" />
+		</ResourceDictionary>
+	</controls:MetroWindow.Resources>
+	<controls:MetroWindow.Flyouts>
         <controls:FlyoutsControl DataContext="{Binding ElementName=Root, Path=DataContext}">
             <controls:Flyout Header="Settings" Position="Right" Width="250"
                              IsOpen="{Binding ElementName=ShowSettingsButton, Path=IsChecked}"
@@ -43,7 +46,12 @@
                     </ComboBox>
                     <Label Content="Raid Hero" FontFamily="{DynamicResource HeaderFontFamily}"
                            FontSize="{DynamicResource SubHeaderFontSize}" />
-                    <Button HorizontalAlignment="Left" VerticalAlignment="Bottom"
+					<StackPanel Orientation="Horizontal" Margin="5">
+						<CheckBox IsChecked="{Binding OpenNewRaidHerosFiles}" />
+						<Label Content="Open new files automatically" FontFamily="{DynamicResource ContentFontFamily}"
+						       FontSize="{DynamicResource ContentFontSize}" />
+					</StackPanel>
+						<Button HorizontalAlignment="Left" VerticalAlignment="Bottom"
                             Height="32"
                             BorderThickness="0" Foreground="{Binding ElementName=description, Path=Foreground}"
                             Margin="5"
@@ -72,7 +80,7 @@
 			               FontSize="{DynamicResource SubHeaderFontSize}" />
 			        <Label Content="DF Tools" FontFamily="{DynamicResource HeaderFontFamily}"
 			               FontSize="{DynamicResource FlyoutHeaderFontSize}" />
-			        <Label Content="Version 1.0.1" FontFamily="{DynamicResource HeaderFontFamily}"
+			        <Label Content="Version 1.0.4" FontFamily="{DynamicResource HeaderFontFamily}"
 			               FontSize="{DynamicResource ContentFontSize}" />
 			        <TextBlock Margin="5" FontFamily="{DynamicResource ContentFontFamily}" FontSize="{DynamicResource ContentFontSize}">
 					Special thanks to <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://raidheroes.tk/">RaidHeros</Hyperlink> and <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/phoenix-oosd/EVTC-Log-Parser">EVTC-Log-Parser</Hyperlink>	
@@ -81,20 +89,40 @@
 			        <Label Content="Changelog" Margin="0 10 0 0" FontFamily="{DynamicResource HeaderFontFamily}"
 			               FontSize="{DynamicResource FlyoutHeaderFontSize}" />
 					<TextBlock Margin="5" FontFamily="{DynamicResource ContentFontFamily}" FontSize="{DynamicResource ContentFontSize}">
-						1.0.3
+						1.0.4
 						<LineBreak />
-						- Added an auto update funciton for RaidHeros<LineBreak />
-						- Different strategies for log detection are now available in the options<LineBreak />
-						- Selected log detection strategy will be persisted<LineBreak />
+						- Fixed some bugs (101%, multiple deaths, filter out garbage damage events)<LineBreak />
+						- Added an option to automatically open new html log files<LineBreak />
+						- Reworked detection strategies (check if evtc file is still in use)<LineBreak />
+						- Added damage per skill (double click on character)<LineBreak />
+						- Added manual upload (copy all files to one directory)<LineBreak />
 						<LineBreak />
 						Older changes can be seen here: <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/M4xZ3r0/GW2RaidTool/releases">GitHub releases</Hyperlink>
 					</TextBlock>
 					
 		        </StackPanel>
 	        </controls:Flyout>
+	        <controls:Flyout Position="Top" Height="340" Margin="0 30 0 0"
+	                         IsOpen="{Binding Path=IsSkillFlyoutVisisble}"
+	                         d:DataContext="{d:DesignInstance viewModels:MainViewModel, IsDesignTimeCreatable=False}">
+				<StackPanel Margin="5" Height="340">
+					<Label Content="{Binding SelectedCharacterStatistics.Name}" FontFamily="{DynamicResource HeaderFontFamily}"
+					       FontSize="{DynamicResource SubHeaderFontSize}"/>
+					<DataGrid Height="250" ItemsSource="{Binding SelectedCharacterStatistics.Skills}" AutoGenerateColumns="False" 
+					          IsReadOnly="True" ClipboardCopyMode="None" VerticalScrollBarVisibility="Visible">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+							<DataGridTextColumn Header="BossDps" Binding="{Binding DpsBoss}" />
+							<DataGridTextColumn Header="BossDamage" Binding="{Binding DamageBoss}" />
+							<DataGridTextColumn Header="AllDps" Binding="{Binding DpsAll}" />
+							<DataGridTextColumn Header="AllDamage" Binding="{Binding DamageAll}" />
+						</DataGrid.Columns>
+					</DataGrid>
+				</StackPanel>
+	        </controls:Flyout>
 		</controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
-    <Grid>
+    <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -116,27 +144,34 @@
 
         <Grid Grid.Row="0">
             <DockPanel>
-                <Button Margin="5" Command="{Binding AddCommand}">
+				<Button Margin="5" Command="{Binding AddCommand}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconOcticons Kind="Plus" Width="16" Height="16" Margin="3"
                                                     VerticalAlignment="Center" />
                         <TextBlock Text="Add" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-                <Button Margin="5" Command="{Binding ClearCommand}">
+				<Button Margin="5" Command="{Binding ClearCommand}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconOcticons Kind="X" Width="16" Height="16" Margin="3"
                                                     VerticalAlignment="Center" />
                         <TextBlock Text="Clear" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-                <Button Margin="5" Command="{Binding ClearAllCommand}">
+				<Button Margin="5" Command="{Binding ClearAllCommand}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconOcticons Kind="X" Width="16" Height="16" Margin="3"
                                                     VerticalAlignment="Center" />
                         <TextBlock Text="Clear all" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
+	            <Button Margin="5" Command="{Binding UploadCommand}">
+		            <StackPanel Orientation="Horizontal">
+			            <iconPacks:PackIconOcticons Kind="CloudUpload" Width="16" Height="16" Margin="3"
+			                                        VerticalAlignment="Center" />
+			            <TextBlock Text="Upload" VerticalAlignment="Center" />
+		            </StackPanel>
+	            </Button>
 				<DockPanel Margin="5" HorizontalAlignment="Right" Visibility="{Binding RaidHerosIsUpdating, Converter={StaticResource BooleanToVisibiltyConverter}}" >
 					<controls:ProgressRing IsLarge="False" Width="5" Height="5" IsActive="{Binding RaidHerosIsUpdating}" />
 					<Label Content="Updating RaidHeros" VerticalAlignment="Center"/>
@@ -145,9 +180,10 @@
         </Grid>
         <DataGrid Grid.Row="1" ItemsSource="{Binding DisplayedRaidHerosLogFiles}" AutoGenerateColumns="False" Margin="5"
                   SelectionMode="Single" IsReadOnly="True" SelectedItem="{Binding SelectedLog}"
-                  ClipboardCopyMode="None" MinHeight="100">
+                  ClipboardCopyMode="None" MinHeight="100" x:Name="EncounterGrid">
             <DataGrid.InputBindings>
-                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding OpenCommand}" />
+				<MouseBinding MouseAction="LeftDoubleClick" Command="{Binding OpenCommand}" 
+							  CommandParameter="{Binding ElementName=EncounterGrid, Path=SelectedItem}" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
@@ -157,11 +193,41 @@
 				<DataGridTextColumn Header="All DPS" Binding="{Binding AllDps}" />
 				<DataGridTextColumn Header="Date"
                                     Binding="{helper:CultureAwareBinding Path=EncounterDate, StringFormat=g}" />
+	            <DataGridTemplateColumn Header="html">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Background="Transparent" 
+									Command="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=DataContext.OpenCommand}" 
+									CommandParameter="{Binding}"
+							        Visibility="{Binding Path=ParsedLogPath, Converter={StaticResource NullToVisibliltyConverter}}">
+								<iconPacks:PackIconOcticons Kind="Globe" Height="12" />
+							</Button>		
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-		<DataGrid Grid.Row="2" ItemsSource="{Binding SelectedLog.CharacterStatistics}" IsReadOnly="True" ClipboardCopyMode="None"
+		<DataGrid Grid.Row="2" ItemsSource="{Binding CharacterStatistics}" IsReadOnly="True" ClipboardCopyMode="None"
                   Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibiltyConverter}}"
-                  Margin="5" VerticalScrollBarVisibility="Auto" MinHeight="100" MaxHeight="300"/>
+		          SelectedItem="{Binding SelectedCharacterStatistics}"
+				  AutoGenerateColumns="False"
+                  Margin="5" VerticalScrollBarVisibility="Auto" MinHeight="100" MaxHeight="300" x:Name="CharacterGrid">
+			<DataGrid.InputBindings>
+				<MouseBinding MouseAction="LeftDoubleClick" Command="{Binding OpenSkillsCommand}" 
+				              CommandParameter="{Binding ElementName=CharacterGrid, Path=SelectedItem}" />
+			</DataGrid.InputBindings>
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+				<DataGridTextColumn Header="Displayname" Binding="{Binding DisplayName}" />
+				<DataGridTextColumn Header="Role" Binding="{Binding Role}" />
+				<DataGridTextColumn Header="BossDps" Binding="{Binding BossDps}" />
+				<DataGridTextColumn Header="BossDamage" Binding="{Binding BossDamage}" />
+				<DataGridTextColumn Header="AllDps" Binding="{Binding AllDps}" />
+				<DataGridTextColumn Header="AllDamage" Binding="{Binding AllDamage}" />
+				<DataGridTextColumn Header="Down" Binding="{Binding Down}" />
+				<DataGridTextColumn Header="Dead" Binding="{Binding Dead}" />
+			</DataGrid.Columns>
+		</DataGrid>
         <Expander Grid.Row="3" VerticalAlignment="Bottom" Header="{Binding Path=LastLogMessage}" IsExpanded="False"
                   ExpandDirection="Up">
             <ListBox ItemsSource="{Binding ParseMessages}" MaxHeight="200" Margin="5">

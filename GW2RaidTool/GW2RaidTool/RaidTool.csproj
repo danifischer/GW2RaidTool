@@ -138,6 +138,8 @@
     </ApplicationDefinition>
     <Compile Include="BootStrapper.cs" />
     <Compile Include="Helper\CultureAwareBinding.cs" />
+    <Compile Include="Helper\FileInUseChecker.cs" />
+    <Compile Include="Helper\NullToVisibliltyConverter.cs" />
     <Compile Include="Helper\RelayCommand.cs" />
     <Compile Include="Logic\FileWatcher.cs" />
     <Compile Include="Logic\HtmlFileWatcher.cs" />
@@ -145,7 +147,6 @@
     <Compile Include="Logic\Interfaces\IFileWatcher.cs" />
     <Compile Include="Logic\Interfaces\ILogFileConverter.cs" />
     <Compile Include="Logic\Interfaces\ILogfileParser.cs" />
-    <Compile Include="Logic\Interfaces\IParsedFileCopier.cs" />
     <Compile Include="Logic\Interfaces\IRaidHerosUpdater.cs" />
     <Compile Include="Logic\LogDetectionStrategies\CompressedStrategy.cs" />
     <Compile Include="Logic\Interfaces\ILogDetectionStrategy.cs" />
@@ -154,7 +155,6 @@
     <Compile Include="Logic\LogDetectionStrategies\WaitStrategy.cs" />
     <Compile Include="Logic\LogFileConverter.cs" />
     <Compile Include="Logic\LogfileParser.cs" />
-    <Compile Include="Logic\ParsedFileCopier.cs" />
     <Compile Include="Logic\RaidHerosUpdater.cs" />
     <Compile Include="Messages\LogMessage.cs" />
     <Compile Include="Messages\NewEncounterMessage.cs" />
@@ -162,6 +162,7 @@
     <Compile Include="Models\CharacterStatistics.cs" />
     <Compile Include="Models\IEncounterLog.cs" />
     <Compile Include="Models\EncounterLog.cs" />
+    <Compile Include="Models\SkillDamage.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Enums\LogTypes.cs" />
     <Compile Include="Enums\LogFilter.cs" />
