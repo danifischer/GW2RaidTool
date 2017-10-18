@@ -80,7 +80,7 @@
 			               FontSize="{DynamicResource SubHeaderFontSize}" />
 			        <Label Content="DF Tools" FontFamily="{DynamicResource HeaderFontFamily}"
 			               FontSize="{DynamicResource FlyoutHeaderFontSize}" />
-			        <Label Content="Version 1.0.1" FontFamily="{DynamicResource HeaderFontFamily}"
+			        <Label Content="Version 1.0.4" FontFamily="{DynamicResource HeaderFontFamily}"
 			               FontSize="{DynamicResource ContentFontSize}" />
 			        <TextBlock Margin="5" FontFamily="{DynamicResource ContentFontFamily}" FontSize="{DynamicResource ContentFontSize}">
 					Special thanks to <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://raidheroes.tk/">RaidHeros</Hyperlink> and <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/phoenix-oosd/EVTC-Log-Parser">EVTC-Log-Parser</Hyperlink>	
@@ -89,11 +89,13 @@
 			        <Label Content="Changelog" Margin="0 10 0 0" FontFamily="{DynamicResource HeaderFontFamily}"
 			               FontSize="{DynamicResource FlyoutHeaderFontSize}" />
 					<TextBlock Margin="5" FontFamily="{DynamicResource ContentFontFamily}" FontSize="{DynamicResource ContentFontSize}">
-						1.0.3
+						1.0.4
 						<LineBreak />
-						- Added an auto update funciton for RaidHeros<LineBreak />
-						- Different strategies for log detection are now available in the options<LineBreak />
-						- Selected log detection strategy will be persisted<LineBreak />
+						- Fixed some bugs (101%, multiple deaths, filter out garbage damage events)<LineBreak />
+						- Added an option to automatically open new html log files<LineBreak />
+						- Reworked detection strategies (check if evtc file is still in use)<LineBreak />
+						- Added damage per skill (double click on character)<LineBreak />
+						- Added manual upload (copy all files to one directory)<LineBreak />
 						<LineBreak />
 						Older changes can be seen here: <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/M4xZ3r0/GW2RaidTool/releases">GitHub releases</Hyperlink>
 					</TextBlock>

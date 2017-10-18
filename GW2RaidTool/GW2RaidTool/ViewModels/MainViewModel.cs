@@ -93,23 +93,30 @@ namespace RaidTool.ViewModels
 
 		private void UploadLogFiles(object obj)
 		{
-			var enumerable = DisplayedRaidHerosLogFiles.Select(i => i.EvtcPath).Distinct();
-			var directoryName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "temp");
-
-			if (Directory.Exists(directoryName))
+			try
 			{
-				Directory.Delete(directoryName, true);
+				var enumerable = DisplayedRaidHerosLogFiles.Select(i => i.EvtcPath).Distinct().ToList();
+				var directoryName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "temp");
+
+				if (Directory.Exists(directoryName))
+				{
+					Directory.Delete(directoryName, true);
+				}
+				Directory.CreateDirectory(directoryName);
+
+				Parallel.ForEach(enumerable, s =>
+				{
+					var fileInfo = new FileInfo(s);
+					var fileInfoName = fileInfo.Name;
+					File.Copy(s, Path.Combine(directoryName, fileInfoName));
+				});
+
+				Process.Start(directoryName);
 			}
-			Directory.CreateDirectory(directoryName);
-
-			Parallel.ForEach(enumerable, s =>
+			catch (Exception e)
 			{
-				var fileInfo = new FileInfo(s);
-				var fileInfoName = fileInfo.Name;
-				File.Copy(s, Path.Combine(directoryName, fileInfoName));
-			});
-
-			Process.Start(directoryName);
+				_messageBus.SendMessage(new LogMessage(e.Message));
+			}
 		}
 
 		public ICommand UploadCommand { get; set; }
