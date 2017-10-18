@@ -18,7 +18,6 @@ namespace RaidTool
 			containerBuilder.RegisterType<MessageBus>().As<IMessageBus>().SingleInstance();
 			containerBuilder.RegisterType<LogfileParser>().As<ILogfileParser>();
 			containerBuilder.RegisterType<LogFileConverter>().As<ILogFileConverter>();
-			containerBuilder.RegisterType<ParsedFileCopier>().As<IParsedFileCopier>();
 			containerBuilder.RegisterType<FileWatcher>().As<IFileWatcher>();
 			containerBuilder.RegisterType<HtmlFileWatcher>().As<IHtmlFileWatcher>();
 			containerBuilder.RegisterType<LocalLogParser>().As<ILocalLogParser>();

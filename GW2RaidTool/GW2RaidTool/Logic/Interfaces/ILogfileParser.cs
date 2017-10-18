@@ -2,6 +2,6 @@ namespace RaidTool.Logic.Interfaces
 {
 	public interface ILogfileParser
 	{
-		void ParseLogfile(string name, string path, string raidHerosPath);
+		bool ParseLogfile(string name, string evtcPath, string outputPath, string raidHerosPath);
 	}
 }

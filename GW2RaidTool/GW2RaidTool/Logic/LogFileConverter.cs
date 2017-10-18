@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using EVTC_Log_Parser.Model;
+using EVTC_Log_Parser.Model.Data.Table;
 using RaidTool.Logic.Interfaces;
 using RaidTool.Models;
 
@@ -28,16 +30,18 @@ namespace RaidTool.Logic
 					AllDps = Math.Round(sharedValuesPlayerValue.DPSAll),
 					AllDamage = sharedValuesPlayerValue.TotalAll,
 					Down = sharedValuesPlayerValue.Down.ToString(),
-					Role = sharedValuesPlayerValue.Profession
+					Role = sharedValuesPlayerValue.Profession,
 				};
 
 				if (sharedValuesPlayerValue.Dead 
-				    && sharedValuesPlayerValue.FightDurationPlayer + 1.0 < sharedValues.FightDuration)
+				    && sharedValuesPlayerValue.FightDurationPlayer < sharedValues.FightDuration)
 				{
 					var percent = (sharedValuesPlayerValue.FightDurationPlayer / sharedValues.FightDuration * 100).ToString("0");
 					var timeOfDead = TimeSpan.FromSeconds(sharedValuesPlayerValue.FightDurationPlayer);
 					characterStats.Dead = $"{timeOfDead.Minutes}m {timeOfDead.Seconds}s ({percent}% alive)";
 				}
+
+				AddSkills(sharedValuesPlayerValue.Skills, characterStats);
 				
 				herosLog.CharacterStatistics.Add(characterStats);
 			}
@@ -47,6 +51,24 @@ namespace RaidTool.Logic
 
 			herosLog.AllDps =
 				Math.Round(sharedValues.PlayerValues.Sum(i => i.TotalAll) / sharedValues.FightDuration);
+		}
+
+		private static void AddSkills(IEnumerable<SkillDps> skills, CharacterStatistics characterStats)
+		{
+			foreach (var skill in skills.OrderByDescending(i => i.DPSBoss))
+			{
+				var skillDamage = new SkillDamage
+				{
+					Name = skill.Name,
+					SkillId = skill.SkillId,
+					DamageAll = skill.PowerAll + skill.CondiAll,
+					DamageBoss = skill.PowerBoss + skill.CondiBoss,
+					DpsAll = Math.Round(skill.DPSAll),
+					DpsBoss = Math.Round(skill.DPSBoss)
+				};
+
+				characterStats.Skills.Add(skillDamage);
+			}
 		}
 	}
 }

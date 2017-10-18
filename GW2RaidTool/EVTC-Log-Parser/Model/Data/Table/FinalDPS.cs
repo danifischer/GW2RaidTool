@@ -1,4 +1,8 @@
-﻿namespace EVTC_Log_Parser.Model
+﻿using System;
+using System.Collections.Generic;
+using EVTC_Log_Parser.Model.Data.Table;
+
+namespace EVTC_Log_Parser.Model
 {
 	public class FinalDPS
 	{
@@ -27,5 +31,6 @@
 		public bool Dead { get; set; }
 		public int? DeadTime { get; set; }
 		public double FightDurationPlayer { get; set; }
+		public IEnumerable<SkillDps> Skills { get; set; }
 	}
 }

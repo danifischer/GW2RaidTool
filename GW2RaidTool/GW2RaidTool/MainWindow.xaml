@@ -100,9 +100,27 @@
 					
 		        </StackPanel>
 	        </controls:Flyout>
+	        <controls:Flyout Position="Top" Height="340" Margin="0 30 0 0"
+	                         IsOpen="{Binding Path=IsSkillFlyoutVisisble}"
+	                         d:DataContext="{d:DesignInstance viewModels:MainViewModel, IsDesignTimeCreatable=False}">
+				<StackPanel Margin="5" Height="340">
+					<Label Content="{Binding SelectedCharacterStatistics.Name}" FontFamily="{DynamicResource HeaderFontFamily}"
+					       FontSize="{DynamicResource SubHeaderFontSize}"/>
+					<DataGrid Height="250" ItemsSource="{Binding SelectedCharacterStatistics.Skills}" AutoGenerateColumns="False" 
+					          IsReadOnly="True" ClipboardCopyMode="None" VerticalScrollBarVisibility="Visible">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+							<DataGridTextColumn Header="BossDps" Binding="{Binding DpsBoss}" />
+							<DataGridTextColumn Header="BossDamage" Binding="{Binding DamageBoss}" />
+							<DataGridTextColumn Header="AllDps" Binding="{Binding DpsAll}" />
+							<DataGridTextColumn Header="AllDamage" Binding="{Binding DamageAll}" />
+						</DataGrid.Columns>
+					</DataGrid>
+				</StackPanel>
+	        </controls:Flyout>
 		</controls:FlyoutsControl>
     </controls:MetroWindow.Flyouts>
-    <Grid>
+    <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -187,9 +205,27 @@
 				</DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-		<DataGrid Grid.Row="2" ItemsSource="{Binding SelectedLog.CharacterStatistics}" IsReadOnly="True" ClipboardCopyMode="None"
+		<DataGrid Grid.Row="2" ItemsSource="{Binding CharacterStatistics}" IsReadOnly="True" ClipboardCopyMode="None"
                   Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibiltyConverter}}"
-                  Margin="5" VerticalScrollBarVisibility="Auto" MinHeight="100" MaxHeight="300"/>
+		          SelectedItem="{Binding SelectedCharacterStatistics}"
+				  AutoGenerateColumns="False"
+                  Margin="5" VerticalScrollBarVisibility="Auto" MinHeight="100" MaxHeight="300" x:Name="CharacterGrid">
+			<DataGrid.InputBindings>
+				<MouseBinding MouseAction="LeftDoubleClick" Command="{Binding OpenSkillsCommand}" 
+				              CommandParameter="{Binding ElementName=CharacterGrid, Path=SelectedItem}" />
+			</DataGrid.InputBindings>
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+				<DataGridTextColumn Header="Displayname" Binding="{Binding DisplayName}" />
+				<DataGridTextColumn Header="Role" Binding="{Binding Role}" />
+				<DataGridTextColumn Header="BossDps" Binding="{Binding BossDps}" />
+				<DataGridTextColumn Header="BossDamage" Binding="{Binding BossDamage}" />
+				<DataGridTextColumn Header="AllDps" Binding="{Binding AllDps}" />
+				<DataGridTextColumn Header="AllDamage" Binding="{Binding AllDamage}" />
+				<DataGridTextColumn Header="Down" Binding="{Binding Down}" />
+				<DataGridTextColumn Header="Dead" Binding="{Binding Dead}" />
+			</DataGrid.Columns>
+		</DataGrid>
         <Expander Grid.Row="3" VerticalAlignment="Bottom" Header="{Binding Path=LastLogMessage}" IsExpanded="False"
                   ExpandDirection="Up">
             <ListBox ItemsSource="{Binding ParseMessages}" MaxHeight="200" Margin="5">

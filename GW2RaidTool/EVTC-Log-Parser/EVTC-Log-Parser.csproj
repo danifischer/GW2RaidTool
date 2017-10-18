@@ -68,6 +68,7 @@
     <Compile Include="Model\Data\Skill\Interval.cs" />
     <Compile Include="Model\Data\Skill\Skill.cs" />
     <Compile Include="Model\Data\Table\FinalDPS.cs" />
+    <Compile Include="Model\Data\Table\SkillDps.cs" />
     <Compile Include="Model\Extensions\SpecializationExtensions.cs" />
     <Compile Include="Model\Enums\Activation.cs" />
     <Compile Include="Model\Enums\BuffRemove.cs" />
