@@ -15,7 +15,7 @@ RaidHeros: https://raidheroes.tk/
 EVTC Log Parser: https://github.com/phoenix-oosd/EVTC-Log-Parser
 
 ## Installation
-- Download the application from here: [latest version](https://github.com/M4xZ3r0/GW2RaidTool/raw/master/Versions/1.0.2/GW2RaidTool_1.0.2.zip)
+- Download the application from here: [latest version](https://github.com/M4xZ3r0/GW2RaidTool/raw/master/Versions/1.0.4/GW2RaidTool_1.0.4.zip)
 - Unzip the content
 - Run the "GW2 Raid Tool.bat" file
 
