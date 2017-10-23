@@ -82,5 +82,29 @@ namespace RaidTool.Properties {
                 this["OpenNewRaidHerosFiles"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RaidarUser {
+            get {
+                return ((string)(this["RaidarUser"]));
+            }
+            set {
+                this["RaidarUser"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RaidarPassword {
+            get {
+                return ((string)(this["RaidarPassword"]));
+            }
+            set {
+                this["RaidarPassword"] = value;
+            }
+        }
     }
 }

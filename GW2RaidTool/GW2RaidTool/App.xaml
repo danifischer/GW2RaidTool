@@ -16,6 +16,11 @@
 				<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/controls.buttons.xaml" />
 				<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatButton.xaml" />
 			</ResourceDictionary.MergedDictionaries>
+	        <Color x:Key="Blue">#FF009FE1</Color>
+	        <!--<Color x:Key="Grey">#FFE2E2E2</Color>-->
+	        <Color x:Key="Grey">#666666</Color>
+	        <SolidColorBrush x:Key="BlueBrush" Color="{StaticResource Blue}" options:Freeze="True" />
+	        <SolidColorBrush x:Key="GreyBrush" Color="{StaticResource Grey}" options:Freeze="True" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

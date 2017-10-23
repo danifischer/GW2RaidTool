@@ -15,5 +15,7 @@ namespace RaidTool.Models
 		double BossDps { get; set; }
 		double AllDps { get; set; }
 		ObservableCollection<CharacterStatistics> CharacterStatistics { get; }
+
+		bool? UploadComplete { get; set; }
 	}
 }

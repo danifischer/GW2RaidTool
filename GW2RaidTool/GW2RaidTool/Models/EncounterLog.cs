@@ -13,6 +13,7 @@ namespace RaidTool.Models
 		private TimeSpan _encounterTime;
 		private string _name;
 		private string _parsedLogPath;
+		private bool? _uploadComplete;
 
 		public EncounterLog(string name, string parsedLogPath, string evtcPath)
 		{
@@ -20,6 +21,7 @@ namespace RaidTool.Models
 			ParsedLogPath = parsedLogPath;
 			EvtcPath = evtcPath;
 			ParseDate = DateTime.UtcNow;
+			UploadComplete = false;
 			CharacterStatistics = new ObservableCollection<CharacterStatistics>();
 		}
 
@@ -67,6 +69,12 @@ namespace RaidTool.Models
 		{
 			get => _allDps;
 			set => _allDps = this.RaiseAndSetIfChanged(ref _allDps, value);
+		}
+
+		public bool? UploadComplete
+		{
+			get => _uploadComplete;
+			set => _uploadComplete = this.RaiseAndSetIfChanged(ref _uploadComplete, value);
 		}
 
 		public ObservableCollection<CharacterStatistics> CharacterStatistics { get; }

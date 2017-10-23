@@ -5,6 +5,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -27,6 +30,7 @@ namespace RaidTool.ViewModels
 		private readonly IFileWatcher _fileWatcher;
 		private readonly IMessageBus _messageBus;
 		private readonly IEnumerable<ILogDetectionStrategy> _logDetectionStrategies;
+		private readonly Func<IRaidarUploader> _uploaderFunc;
 		private bool _isVisible;
 		private string _lastLogMessage;
 		private LogFilterEnum _logFilter;
@@ -34,22 +38,24 @@ namespace RaidTool.ViewModels
 		private ObservableCollection<string> _parseMessages;
 		private bool _raidHerosIsUpdating;
 		private IEncounterLog _selectedLog;
-		private bool Settin;
 		private CharacterStatistics _selectedCharacterStatistics;
 		private bool _isSkillFlyoutVisisble;
 
 		public MainViewModel(IFileWatcher fileWatcher, IMessageBus messageBus, 
-			IRaidHerosUpdater raidHerosUpdater, IEnumerable<ILogDetectionStrategy> logDetectionStrategies)
+			IRaidHerosUpdater raidHerosUpdater, IEnumerable<ILogDetectionStrategy> logDetectionStrategies,
+			Func<IRaidarUploader> uploaderFunc)
 		{
 			_fileWatcher = fileWatcher;
 			_messageBus = messageBus;
 			_logDetectionStrategies = logDetectionStrategies;
+			_uploaderFunc = uploaderFunc;
 
 			_logDetectionStrategies.OrderBy(i => i.Name).ToList().ForEach(s => LogTypes.Add(s.Name));
 
 			messageBus.Listen<NewEncounterMessage>().Subscribe(HandleNewEncounter);
 			messageBus.Listen<UpdatedEncounterMessage>().Subscribe(HandleUpdatedEncounter);
 			messageBus.Listen<LogMessage>().Subscribe(HandleNewLogMessage);
+			messageBus.Listen<UploadedEncounterMessage>().Subscribe(HandleUploadedEncounterMessage);
 
 			var raidHerosUpdateTask = Task.Run(() =>
 			{
@@ -61,6 +67,7 @@ namespace RaidTool.ViewModels
 
 			ParseMessages = new ObservableCollection<string>();
 			OpenCommand = new RelayCommand(OpenLog, _ => SelectedLog != null);
+			UploadRaidarCommand = new RelayCommand(UploadRaidar, _ => DisplayedRaidHerosLogFiles.Any(i => i.UploadComplete == false));
 			UploadCommand = new RelayCommand(UploadLogFiles, _ => RaidHerosLogFiles.Any());
 			OpenSkillsCommand = new RelayCommand(ShowSkills);
 			ClearCommand = new RelayCommand(ClearSelectedItem, _ => SelectedLog != null);
@@ -90,6 +97,28 @@ namespace RaidTool.ViewModels
 				_fileWatcher.LogfileWatcher.EnableRaisingEvents = true;
 			});
 		}
+
+		public string RaidarUsername
+		{
+			get => Settings.Default.RaidarUser;
+			set
+			{
+				Settings.Default.RaidarUser = value;
+				Settings.Default.Save();
+			}
+		}
+
+		private void UploadRaidar(object obj)
+		{
+			foreach (var displayedRaidHerosLogFile in DisplayedRaidHerosLogFiles)
+			{
+				if(displayedRaidHerosLogFile.UploadComplete == true) continue;
+				displayedRaidHerosLogFile.UploadComplete = null;
+				Task.Run(() => _uploaderFunc().Upload(displayedRaidHerosLogFile));
+			}
+		}
+
+		public ICommand UploadRaidarCommand { get; set; }
 
 		private void UploadLogFiles(object obj)
 		{
@@ -302,6 +331,12 @@ namespace RaidTool.ViewModels
 					ParseMessages = new ObservableCollection<string>(collection);
 					LastLogMessage = logMessage.Message;
 				}));
+		}
+
+		private void HandleUploadedEncounterMessage(UploadedEncounterMessage uploadedEncounterMessage)
+		{
+			_messageBus.SendMessage(
+				new LogMessage($"Upload succeeded for {uploadedEncounterMessage.EncounterLog.Name}."));
 		}
 
 		private void OpenLog(object obj)
