@@ -64,12 +64,14 @@ namespace RaidTool.Logic
 				_messageBus.SendMessage(new NewEncounterMessage(herosLog));
 				_messageBus.SendMessage(new LogMessage($"Finished parsing {fileInfo.Name}"));
 
-				_messageBus.SendMessage(new LogMessage($"Creating Html for {fileInfo.Name}"));
-				Task.Run(() =>
+				if (bool.Parse(Settings.Default.UseRaidHeros))
 				{
-					_htmlFileWatcherFactory().CreateRaidHerosFile(herosLog);
-
-				});
+					_messageBus.SendMessage(new LogMessage($"Creating Html for {fileInfo.Name}"));
+					Task.Run(() =>
+					{
+						_htmlFileWatcherFactory().CreateRaidHerosFile(herosLog);
+					});
+				}
 			}
 			catch (Exception exception)
 			{

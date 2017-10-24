@@ -23,5 +23,11 @@
     <Setting Name="RaidarPassword" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="UseRaidHeros" Type="System.String" Scope="User">
+      <Value Profile="(Default)">true</Value>
+    </Setting>
+    <Setting Name="AutoUploadToRaidar" Type="System.String" Scope="User">
+      <Value Profile="(Default)">false</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

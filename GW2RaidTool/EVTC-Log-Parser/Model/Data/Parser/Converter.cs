@@ -45,48 +45,74 @@ namespace EVTC_Log_Parser.Model
 
 			// Calculate DPS
 			var rows = new List<FinalDPS>();
-			_players.ForEach(p => rows.Add(new FinalDPS(sharedValues.FightDuration)
+			_players.ForEach(p =>
 			{
-				Group = p.Group,
-				Character = p.Character,
-				Account = p.Account,
-				Profession = p.Profession.ToString(),
-				PowerAll = p.DamageEvents.Where(e => !e.IsBuff && !filteredSkillIds.Contains(e.SkillId)).Sum(e => e.Damage),
-				PowerBoss = p.DamageEvents
-					.Where(e => !e.IsBuff && !filteredSkillIds.Contains(e.SkillId) && e.Target == _target.Instid).Sum(e => e.Damage),
-				CondiAll = p.DamageEvents.Where(e => e.IsBuff && !filteredSkillIds.Contains(e.SkillId)).Sum(e => e.Damage),
-				CondiBoss = p.DamageEvents
-					.Where(e => e.IsBuff && !filteredSkillIds.Contains(e.SkillId) && e.Target == _target.Instid).Sum(e => e.Damage),
-				Down = p.StateEvents.Count(e => e.StateChange == StateChange.ChangeDown),
-				Dead = p.StateEvents.Any(e => e.StateChange == StateChange.ChangeDead),
-				DeadTime = p.StateEvents.LastOrDefault(e => e.StateChange == StateChange.ChangeDead)?.Time,
-				FightDurationPlayer = p.StateEvents.LastOrDefault(e => e.StateChange == StateChange.ChangeDead) != null
-					? (p.StateEvents.Last(e => e.StateChange == StateChange.ChangeDead).Time - _target.FirstAware) / 1000.0
-					: -1.0,
-				Skills = DamageEventsToSkillDamage(p.DamageEvents.Where(i => !filteredSkillIds.Contains(i.SkillId)), _target.Instid, sharedValues.FightDuration)
-			}));
+				var filterDamageEvents = FilterDamageEvents(p.DamageEvents).ToList();
+
+				var finalDps = new FinalDPS(sharedValues.FightDuration)
+				{
+					Group = p.Group,
+					Character = p.Character,
+					Account = p.Account,
+					Profession = p.Profession.ToString(),
+					PowerAll = filterDamageEvents.Where(e => !e.IsBuff && !filteredSkillIds.Contains(e.SkillId)).Sum(e => e.Damage),
+					PowerBoss = filterDamageEvents
+						.Where(e => !e.IsBuff && !filteredSkillIds.Contains(e.SkillId) && e.Target == _target.Instid).Sum(e => e.Damage),
+					CondiAll = filterDamageEvents.Where(e => e.IsBuff && !filteredSkillIds.Contains(e.SkillId)).Sum(e => e.Damage),
+					CondiBoss = filterDamageEvents
+						.Where(e => e.IsBuff && !filteredSkillIds.Contains(e.SkillId) && e.Target == _target.Instid).Sum(e => e.Damage),
+					Down = p.StateEvents.Count(e => e.StateChange == StateChange.ChangeDown),
+					Dead = p.StateEvents.Any(e => e.StateChange == StateChange.ChangeDead),
+					DeadTime = p.StateEvents.LastOrDefault(e => e.StateChange == StateChange.ChangeDead)?.Time,
+					FightDurationPlayer = p.StateEvents.LastOrDefault(e => e.StateChange == StateChange.ChangeDead) != null
+						? (p.StateEvents.Last(e => e.StateChange == StateChange.ChangeDead).Time - _target.FirstAware) / 1000.0
+						: -1.0,
+					Skills = DamageEventsToSkillDamage(filterDamageEvents.Where(i => !filteredSkillIds.Contains(i.SkillId)),
+						_target.Instid, sharedValues.FightDuration)
+				};
+				
+				rows.Add(finalDps);
+			});
 			rows = rows.OrderByDescending(f => f.TotalBoss).ToList();
 
 			// Keep for debugging
-			//     foreach (var player in _players)
-			//     {
-			//var groupBy = player.DamageEvents;
-			//      var enumerable = groupBy.Where(i => i.Target == _target.Instid).OrderByDescending(i => i.Damage).GroupBy(i => i.SkillId);
+			//foreach (var player in _players)
+			//{
+			//	var groupBy = player.DamageEvents;
+			//	var enumerable = groupBy.Where(i => i.Target == _target.Instid).OrderByDescending(i => i.Damage).GroupBy(i => i.SkillId);
 
-			//      var select = enumerable
-			//	.Select(k => Tuple.Create(k.Key, _parser.Skills.FirstOrDefault(i => i.Id == k.Key)?.Name, groupBy.Where(j => j.SkillId == k.Key).Sum(j => j.Damage)))
-			//	.ToList();
+			//	var select = enumerable
+			//  .Select(k => Tuple.Create(k.Key, _parser.Skills.FirstOrDefault(i => i.Id == k.Key)?.Name, groupBy.Where(j => j.SkillId == k.Key).Sum(j => j.Damage)))
+			//  .ToList();
 
-			//      var first = select.FirstOrDefault();
-			//      var second = select.Skip(1).FirstOrDefault();
-			//      var third = select.Skip(2).FirstOrDefault();
-
-			//     }
+			//	var first = select.FirstOrDefault();
+			//	var second = select.Skip(1).FirstOrDefault();
+			//	var third = select.Skip(2).FirstOrDefault();
+			//	var target = _parser.NPCs.Where(i => i.Instid == 1356);
+			//}
 
 
 			sharedValues.PlayerValues = rows;
 
 			return sharedValues;
+		}
+
+		private IEnumerable<CombatEvent> FilterDamageEvents(IEnumerable<CombatEvent> damagEvents)
+		{
+			var filteredSkillNames = new List<string>
+			{
+				"Aegis", "Fury", "Might",
+				"Protection", "Quickness", "Regeneration",
+				"Resistance", "Stability", "Swiftness",
+				"Vigor", "??"
+			};
+
+
+			return damagEvents.Where(i =>
+			{
+				var name = _parser.Skills.FirstOrDefault(k => i.SkillId == k.Id)?.Name;
+				return name != null && name != i.SkillId.ToString() && !filteredSkillNames.Contains(name);
+			});
 		}
 
 		private IEnumerable<SkillDps> DamageEventsToSkillDamage(IEnumerable<CombatEvent> damageEvents, int targetId, double fightDuration)

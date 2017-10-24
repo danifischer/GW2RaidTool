@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using RaidTool.Helper;
 using RaidTool.Logic.Interfaces;
@@ -30,7 +31,7 @@ namespace RaidTool.Logic
 
 		    var restResponse = restClient.Execute(restRequest);
 
-		    if (restResponse.ResponseStatus == ResponseStatus.Completed)
+		    if (restResponse.ResponseStatus == ResponseStatus.Completed && restResponse.StatusCode == HttpStatusCode.OK)
 		    {
 			    encounterLog.UploadComplete = true;
 			    _messageBus.SendMessage(new UploadedEncounterMessage(encounterLog));
@@ -38,7 +39,7 @@ namespace RaidTool.Logic
 		    else
 		    {
 			    encounterLog.UploadComplete = false;
-				_messageBus.SendMessage(new LogMessage(restResponse.ErrorMessage));
+				_messageBus.SendMessage(new LogMessage($"{restResponse.StatusCode} - {restResponse.Content}"));
 			}
 
 			

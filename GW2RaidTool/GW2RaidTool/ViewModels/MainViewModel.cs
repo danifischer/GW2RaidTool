@@ -57,11 +57,15 @@ namespace RaidTool.ViewModels
 			messageBus.Listen<LogMessage>().Subscribe(HandleNewLogMessage);
 			messageBus.Listen<UploadedEncounterMessage>().Subscribe(HandleUploadedEncounterMessage);
 
-			var raidHerosUpdateTask = Task.Run(() =>
+			Task raidHerosUpdateTask = null;
+			if (UseRaidHeros)
 			{
-				RaidHerosIsUpdating = true;
-				raidHerosUpdater.UpdateRaidHeros();
-			});
+				raidHerosUpdateTask = Task.Run(() =>
+				{
+					RaidHerosIsUpdating = true;
+					raidHerosUpdater.UpdateRaidHeros();
+				});
+			}
 
 			var directoryName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
@@ -87,15 +91,22 @@ namespace RaidTool.ViewModels
 
 			_fileWatcher.Run();
 
-			Task.Run(() =>
+			if (UseRaidHeros)
 			{
-				while (!raidHerosUpdateTask.IsCompleted)
+				Task.Run(() =>
 				{
-				}
-				
-				RaidHerosIsUpdating = false;
+					while (raidHerosUpdateTask != null && !raidHerosUpdateTask.IsCompleted)
+					{
+					}
+
+					RaidHerosIsUpdating = false;
+					_fileWatcher.LogfileWatcher.EnableRaisingEvents = true;
+				});
+			}
+			else
+			{
 				_fileWatcher.LogfileWatcher.EnableRaisingEvents = true;
-			});
+			}
 		}
 
 		public string RaidarUsername
@@ -365,6 +376,26 @@ namespace RaidTool.ViewModels
 			}
 		}
 
+		public bool UseRaidHeros
+		{
+			get => bool.Parse(Settings.Default.UseRaidHeros);
+			set
+			{
+				Settings.Default.UseRaidHeros = value.ToString();
+				Settings.Default.Save();
+			}
+		}
+
+		public bool AutoUploadToRaidar
+		{
+			get => bool.Parse(Settings.Default.AutoUploadToRaidar);
+			set
+			{
+				Settings.Default.AutoUploadToRaidar = value.ToString();
+				Settings.Default.Save();
+			}
+		}
+
 		private void HandleNewEncounter(NewEncounterMessage encounterMessage)
 		{
 			var encounterLog = encounterMessage.EncounterLog;
@@ -377,6 +408,10 @@ namespace RaidTool.ViewModels
 					if (DisplayedRaidHerosLogFiles.Contains(encounterLog))
 					{
 						SelectedLog = encounterLog;
+						if (AutoUploadToRaidar)
+						{
+							UploadRaidar(null);
+						}
 					}
 				}));
 		}
