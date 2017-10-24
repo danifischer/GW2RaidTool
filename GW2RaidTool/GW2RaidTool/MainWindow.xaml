@@ -16,8 +16,8 @@
         <controls:WindowButtonCommands Style="{DynamicResource MahApps.Metro.Styles.WindowButtonCommands.Win10}" />
     </controls:MetroWindow.WindowButtonCommands>
     <controls:MetroWindow.RightWindowCommands>
-        <controls:WindowCommands>
-            <ToggleButton x:Name="ShowSettingsButton">
+		<controls:WindowCommands>
+			<ToggleButton x:Name="ShowSettingsButton">
                 <iconPacks:PackIconOcticons Kind="Settings" />
             </ToggleButton>
 	        <ToggleButton x:Name="ShowAboutButton">
@@ -98,18 +98,22 @@
 			               FontSize="{DynamicResource SubHeaderFontSize}" />
 			        <Label Content="DF Tools" FontFamily="{DynamicResource HeaderFontFamily}"
 			               FontSize="{DynamicResource FlyoutHeaderFontSize}" />
-			        <Label Content="Version 1.0.5" FontFamily="{DynamicResource HeaderFontFamily}"
+			        <Label Content="Version 1.0.6" FontFamily="{DynamicResource HeaderFontFamily}"
 			               FontSize="{DynamicResource ContentFontSize}" />
 			        <TextBlock Margin="5" FontFamily="{DynamicResource ContentFontFamily}" FontSize="{DynamicResource ContentFontSize}">
-					Special thanks to <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://raidheroes.tk/">RaidHeros</Hyperlink> and <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/phoenix-oosd/EVTC-Log-Parser">EVTC-Log-Parser</Hyperlink>	
+					Special thanks to <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://raidheroes.tk/">RaidHeros</Hyperlink>, <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/phoenix-oosd/EVTC-Log-Parser">EVTC-Log-Parser</Hyperlink><LineBreak />
+					and <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://www.gw2raidar.com/">GW2Raidar</Hyperlink>
 					</TextBlock>
 
 			        <Label Content="Changelog" Margin="0 10 0 0" FontFamily="{DynamicResource HeaderFontFamily}"
 			               FontSize="{DynamicResource FlyoutHeaderFontSize}" />
 					<TextBlock Margin="5" FontFamily="{DynamicResource ContentFontFamily}" FontSize="{DynamicResource ContentFontSize}">
-						1.0.5
+						1.0.6
 						<LineBreak />
-						- Connection to GW2Raidar added (please enter username and password in the settings)<LineBreak />
+						- Filter out non dps events in parser<LineBreak />
+						- Adapt to new GW2Raidar API (error codes)<LineBreak />
+						- Add option to not use RaidHeros<LineBreak />
+						- Add option to automatically upload new logs to GW2Raidar<LineBreak />
 						<LineBreak />
 						Older changes can be seen here: <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://github.com/M4xZ3r0/GW2RaidTool/releases">GitHub releases</Hyperlink>
 					</TextBlock>
