@@ -48,14 +48,24 @@
 					<Label Content="GW2 Raidar" FontFamily="{DynamicResource HeaderFontFamily}"
 					       FontSize="{DynamicResource SubHeaderFontSize}" />
 	                <Label Content="Username" />
-	                <TextBox controls:TextBoxHelper.Watermark="Username" Text="{Binding RaidarUsername}"/>
+					<TextBox Margin="5 0 0 0" controls:TextBoxHelper.Watermark="Username" Text="{Binding RaidarUsername}"/>
 					<Label Content="Password" />
-					<PasswordBox Loaded="PasswordBox_Loaded" controls:TextBoxHelper.Watermark="Password"/>
-					
+					<PasswordBox Margin="5 0 0 0" Loaded="PasswordBox_Loaded" controls:TextBoxHelper.Watermark="Password"/>
+	                <StackPanel Orientation="Horizontal" Margin="5">
+						<CheckBox IsChecked="{Binding AutoUploadToRaidar}" />
+						<Label Content="Auto upload new displayed files" FontFamily="{DynamicResource ContentFontFamily}"
+		                       FontSize="{DynamicResource ContentFontSize}" />
+	                </StackPanel>
+	                
 					<Label Content="Raid Hero" FontFamily="{DynamicResource HeaderFontFamily}"
                            FontSize="{DynamicResource SubHeaderFontSize}" />
-					<StackPanel Orientation="Horizontal" Margin="5">
-						<CheckBox IsChecked="{Binding OpenNewRaidHerosFiles}" />
+					<StackPanel Orientation="Horizontal" Margin="5 0 0 0">
+						<CheckBox IsChecked="{Binding UseRaidHeros}" />
+						<Label Content="Parse with RaidHeros" FontFamily="{DynamicResource ContentFontFamily}"
+						       FontSize="{DynamicResource ContentFontSize}" />
+					</StackPanel>
+	                <StackPanel Orientation="Horizontal" Margin="5 0 0 0">
+					<CheckBox IsChecked="{Binding OpenNewRaidHerosFiles}" />
 						<Label Content="Open new files automatically" FontFamily="{DynamicResource ContentFontFamily}"
 						       FontSize="{DynamicResource ContentFontSize}" />
 					</StackPanel>

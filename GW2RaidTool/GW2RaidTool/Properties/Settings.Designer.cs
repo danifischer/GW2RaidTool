@@ -106,5 +106,29 @@ namespace RaidTool.Properties {
                 this["RaidarPassword"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("true")]
+        public string UseRaidHeros {
+            get {
+                return ((string)(this["UseRaidHeros"]));
+            }
+            set {
+                this["UseRaidHeros"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("false")]
+        public string AutoUploadToRaidar {
+            get {
+                return ((string)(this["AutoUploadToRaidar"]));
+            }
+            set {
+                this["AutoUploadToRaidar"] = value;
+            }
+        }
     }
 }
